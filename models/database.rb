@@ -63,8 +63,30 @@ class Database
         File.write(@database_file, @data.to_json)
     end
 
-    def update(class_name, object)
+    def edit(class_name, object)
         @data = get_data()
+        @data[class_name] = object
+        File.write(@database_file, @data.to_json)
+    end
+
+    def delete(class_name, id)
+        @data = get_data()
+        for item in @data[class_name]
+            if item["id"] == id
+                @data[class_name].delete(item)
+            end
+        end
+        File.write(@database_file, @data.to_json)
+    end
+
+    def get_by_id(class_name, id)
+        @data = get_data()
+        for item in @data[class_name]
+            if item["id"] == id
+                return item
+            end
+        end
+
         @data[class_name] = object
         File.write(@database_file, @data.to_json)
     end

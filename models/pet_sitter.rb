@@ -5,8 +5,8 @@ class Pet_sitter < User
 
     attr_reader :name, :get_all
 
-    def initialize(id, name, contact, post_code, abn)
-        super(id, name, contact, post_code)
+    def initialize(name, contact, post_code, abn)
+        super(name, contact, post_code)
         @abn = abn
     end
 
