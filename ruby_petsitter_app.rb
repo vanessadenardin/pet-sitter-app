@@ -1,6 +1,19 @@
-require_relative './models/client.rb'
-require_relative './models/pet_sitter.rb'
+require_relative './models/client'
+require_relative './models/pet_sitter'
+require_relative './models/database'
+database_file = File.join(File.dirname(__FILE__), 'database.json')
 
-# caio = Client.new(0, "Caio", "a@a.com", "3028", [])
-# puts caio.get_db_object()
+db = Database.new(database_file)
+
+pets = db.pets
+
+db.add("pets", {
+    name: "Guri",
+    age: 5,
+    observations: "",
+    type: "cat"
+})
+# db.update_pets(pets)
+
+print db.pets
 

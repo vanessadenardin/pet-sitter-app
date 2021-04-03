@@ -55,6 +55,6 @@ describe Job do
         client_id = 1
         list_task = ['feed cats', 'clean litter box']
         job = Job.new(id, date, client_id, list_task)
-        expect(job.list_task).to eq(list_task)
+        expect(job.list_tasks).to eq(list_task)
     end
 end
