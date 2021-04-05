@@ -55,7 +55,7 @@ class Database
     end
 
     def get_all(class_name)
-        return JSON.parse(File.read(@database_file))
+        return JSON.parse(File.read(@database_file))[class_name]
         
         rescue Errno::ENOENT
             File.open(@database_file, 'w+')
