@@ -28,6 +28,7 @@ describe Client do
         client = Client.new(name, contact, post_code)
         expect(client.name).to eq(name)
     end
+    
     it 'should return client existing pet' do
         name = 'Vanessa'
         contact = "vanessa.denardin@gmail.com"
