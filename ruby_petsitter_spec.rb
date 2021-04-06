@@ -1,7 +1,7 @@
-require_relative './models/user'
-require_relative './models/client'
-require_relative './models/pet'
-require_relative './models/job'
+require_relative './lib/user'
+require_relative './lib/client'
+require_relative './lib/pet'
+require_relative './lib/job'
 
 describe User do
     it 'should return a name' do
