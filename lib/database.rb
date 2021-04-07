@@ -5,7 +5,7 @@ class Database
     # get first state of all models in the database
     def initialize(database_file)
         @database_file = database_file
-        @data = []
+        @data = {}
     end
 
     def save()
@@ -48,13 +48,11 @@ class Database
         for item in @data[class_name]
             if item["id"] == id
                 return item
-            else
-                return false
             end
         end
     end
 
-    def get_all(class_name)
+    def get_class(class_name)
         return JSON.parse(File.read(@database_file))[class_name]
         
         rescue Errno::ENOENT
@@ -63,6 +61,26 @@ class Database
             retry
     end
 
+    def get_all()
+        return JSON.parse(File.read(@database_file))
+        
+        rescue Errno::ENOENT
+            File.open(@database_file, 'w+')
+            File.write(@database_file, [])
+            retry
+    end
+
+    def get_pet_list_by_client_id(client_id)
+        pet_list = []
+        for pet in get_class("pets")
+            if client_id == pet["client_id"]
+                pet_list.push(pet)
+            end
+        end
+
+        return pet_list
+    end
+    
     # find latest id used and return one more
     def get_new_id(class_name)
         # if array is empty return first id 0

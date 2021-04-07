@@ -7,13 +7,15 @@ class App
     def initialize(database_file)
         @db = Database.new(database_file)
         @prompt = TTY::Prompt.new
+        @last_menu = "main_menu"
     end
 
     def main_menu()
         puts "My Petsitter App"
         puts "Welcome!"
         puts '<>' * 20
-            loop do
+        # self.send("menu_clients")
+        loop do
             # system 'clear'
             input = @prompt.select('Menu:') do |menu|
                 menu.choice name: 'Profile', value: "PROFILE"
@@ -22,79 +24,107 @@ class App
                 menu.choice name: 'Exit', value: "EXIT"
             end
             puts '-' * 20
-            case input
-                when "PROFILE"
-                    print "PROFILE"
-                when "CLIENTS"
-                    menu_clients()
-                when "JOBS"
-                    menu_jobs()
-                when "EXIT"
-                    exit
-            end
+            go_to(input)
         end
     end
 
+    def navigation(menu)
+        menu.push({name: 'Back', value: "BACK"})
+        menu.push({name: 'Home', value: "HOME"})
+        menu.push({name: 'Exit', value: "EXIT"})
+    
+        return menu
+    end
+
+    # menus that repeat on all methods
+    def go_to(input)
+        case input
+            # when "PROFILE"
+            #     print "PROFILE"
+            when "CLIENTS"
+                @last_menu = "main_menu"
+                menu_clients()
+            when "JOBS"
+                @last_menu = "main_menu"
+                menu_jobs()
+            when "BACK"
+                self.send(@last_menu)
+            when "HOME"
+                main_menu()
+            when "EXIT"
+                exit()
+            when "CLIENT_ADD"
+            when "CLIENT_DELETE"
+            when "PET_ADD"
+            when "PET_DELETE"
+        end
+    end
+
+    def menu_edit_pet(pet)
+        loop do
+            # system 'clear'
+            puts "Pet details"
+            puts "Name: #{pet["name"]}"
+            puts "Age: #{pet["age"]}"
+            puts "Type: #{pet["type"]}"
+            puts "Observations: #{pet["observations"]}"
+            puts "-" * 20
+            menu = [
+                {name: 'Delete', value: "DELETE"}
+            ]
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            go_to(input)
+            menu_pet_delete(pet)
+            menu_edit_client(pet["client_id"])
+        end
+    end
+
+    def menu_pet_delete(pet)
+        @db.delete("pets", pet["id"])
+    end
+
+    def menu_edit_client(id)
+        print "oi #{id}"
+        client = @db.get_by_id("clients", id)
+        print client
+        client["pets_list"] = @db.get_pet_list_by_client_id(client["id"])
+        loop do
+            # system 'clear'
+            puts "Client details"
+            puts "Name: #{client["name"]}"
+            puts "Contact: #{client["contact"]}"
+            puts "Post Code: #{client["post_code"]}"
+            puts "Client has #{client["pets_list"].length} pets registered."
+            puts "-" * 20
+            menu = []
+            for pet in client["pets_list"]
+                menu.push({name: "#{pet["name"]}", value: pet})
+            end
+            menu = navigation(menu)
+            input = @prompt.select("Pets list: ", menu)
+            go_to(input)
+            @last_menu = "menu_clients"
+            menu_edit_pet(input)
+        end
+    end 
+    
     def menu_clients()
         loop do
             # system 'clear'
-            clients = @db.get_all("clients")
+            clients = @db.get_class("clients")
             # print(clients)
-            # puts "You have #{id quantity clients} clients registered."
+            puts "You have #{clients.length} clients registered."
             puts "List of clients:"
-            input = @prompt.select('Menu:') do |menu|
-                for client in clients
-                    menu.choice name: "#{client["name"]}", value: client
-                end
-                menu.choice name: 'Pets', value: "PETS"
-                menu.choice name: 'Back', value: "BACK"
-                menu.choice name: 'Home', value: "HOME"
-                menu.choice name: 'Exit', value: "EXIT"
+            menu = []
+            for client in clients
+                menu.push({name: "#{client["name"]}", value: client["id"]})
             end
-            puts '-' * 20
-            case input
-                when "PETS"
-                    menu_pets()
-                when "BACK"
-                    main_menu()
-                when "HOME"
-                    main_menu()
-                when "EXIT"
-                    exit
-                else
-                    print input
-            end
-            
-        end
-    end
-
-    def menu_pets()
-        loop do
-            # system 'clear'
-            pets = @db.get_all("pets")
-            # print(pets)
-            # puts "You have #{id quantity pets} pets registered."
-            # puts "List of pets:"
-            input = @prompt.select('List of pets:') do |menu|
-                for pet in pets
-                    menu.choice name: "#{pet["name"]}", value: pet
-                end
-                menu.choice name: 'Back', value: "BACK"
-                menu.choice name: 'Home', value: "HOME"
-                menu.choice name: 'Exit', value: "EXIT"
-            end
-            puts '-' * 20
-            case input
-                when "BACK"
-                    main_menu()
-                when "HOME"
-                    main_menu()
-                when "EXIT"
-                    exit
-                else
-                    print input
-            end
-            
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            go_to(input)
+            @last_menu = "menu_clients"
+            menu_edit_client(input)
         end
     end
 
