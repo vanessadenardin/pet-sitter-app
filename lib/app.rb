@@ -276,9 +276,10 @@ class App
     end
 
     def menu_jobs()
+        jobs = @db.get_jobs_last_7_days()
+
         loop do
             # system 'clear'
-            jobs = @db.get_jobs_last_7_days()
             # print(jobs)
             puts "You have #{jobs.length} jobs for the next 7 days."
             puts "List of jobs:"
@@ -287,6 +288,7 @@ class App
                 menu.push({name: "#{job["id"] + 1}", value: job["id"]})
             end
             menu.push({name: 'Add job', value: "ADD"})
+            menu.push({name: 'Show all jobs', value: "JOBS"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             go_to(input)
@@ -294,6 +296,8 @@ class App
             case input
             when "ADD"
                 job_add()
+            when "JOBS"
+                jobs = @db.get_data("jobs")
             else
                 menu_edit_job(input)
             end
