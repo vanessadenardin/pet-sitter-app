@@ -2,41 +2,80 @@
 
 ## Table of Contents
 
-1. [Repository link](#Repository-link)
+1. [Development Process](#development-process)
 
-1. [Software development plan](#Software-development-plan)
+    1. [Repository link](#Repository-link)
 
-1. [Application purpose and scope](#Application-purpose-and-scope)
-    - [Description](#Description)
-    - [Problem/Solution](#problem/solution)
-    - [Target Audience](#Target-Audience)
+    1. [Software development plan](#Software-development-plan)
 
-1. [Features](#Features)
-
-1. [User interaction and experience for the application](#User-interaction-an-experience-for-the-application)
-
-1. [Diagram](#Diagram)
+    1. [Diagram](#Diagram)
     - [Workflow diagram](#Workflow-diagram)
     - [UML diagram](#UML-diagram)
 
-1. [Implementation plan](#Implementation-plan)
 
-1. [User instructions](#User-instructions)
+1. [About Application](#about-application)
 
-1. [Requirements](#Requirements)
+    1. [Application purpose and scope](#Application-purpose-and-scope)
+        - [Description](#Description)
+        - [Problem/Solution](#problem/solution)
+        - [Target Audience](#Target-Audience)
+
+    1. [Features](#Features)
+
+    1. [Code structure](#Code-structure)
+
+    1. [Implementation plan](#Implementation-plan)
+
+1. [User Experience](#user-experience)
+
+    1. [User instructions](#User-instructions)
+
+    1. [Requirements](#Requirements)
 
 [Reference](#Reference)
 
 ---
-## 1. Repository link
+## 1. Development Process
+---
+
+### 1. Repository link
 https://github.com/vanessadenardin/pet-sitter-app
 
 ---
-## 2. Software development plan
-https://github.com/vanessadenardin/pet-sitter-app/projects/1
+### 2. Software development plan
+
+When starting the development of this application I did some brainstorms to assist in the development process, defining screens for the terminal and classes for the code trying to keep it simple and focusing on making all the features work.
+
+![screen definition](/docs/user-screen.png)
+
+![screen definition](/docs/pet-job-screen.png)
+
+![classes definition](/docs/classes.png)
+
+I chose to use GitHub projects to organize what I needed to do. I separate into cards according to the assignment requirements, adding a related card to complete the requirement. On each card, I added a checklist to verify that all plans/ideas were completed at the end of the application's development. Below is an example of a GitHub project during app development, I also added the public link to the GitHub project.
+
+![GitHub-projects](/docs/GitHub-projects.png)
+
+[GitHub Projects link here](https://github.com/vanessadenardin/pet-sitter-app/projects/1)
 
 ---
-## 3. Application purpose and scope
+<!-- ## How use -->
+## 3. Diagram
+
+## - Workflow diagram
+
+
+## - UML diagram
+
+
+---
+## 4. Implementation plan
+
+---
+## 2. About Application
+---
+
+### 1. Application purpose and scope
 
 
 ## - Description
@@ -58,7 +97,7 @@ In this first phase, the application is intended for a single user (pet sitter) 
 The application aims to help the pet caregiver to define and monitor task lists and pet information to provide the best care meeting with the needs of the pet owner and the animal itself during the owner's absence.
 
 ---
-## 4. Features
+### 2. Features
 <!-- demonstrate your understanding of the following language elements and concepts:
 - use of variables and the concept of variable scope
 - loops and conditional control structures
@@ -108,26 +147,34 @@ Extras:
 - Message chat
 
 ---
-## 5. User interaction and experience for the application
+### 3. Code structure
+
+- `ruby_petsitter_app.rb` is the file that saves the data into `database.json` file and save as a class called *App*.
+
+- `app.rb` is the main document that controls the flow of the program.
+
+- `user.rb` contains the User class and represents the users of the application. This class contains information related to the pet sitter and also to customers, such as name, contact and postal code.
+
+- `client.rb` is the Client class, daughter of the User superclass and has the Pets subclass (representing the client's list of pets). This class deals with methods that allows to update and delete customers, in addition to adding, updating and deleting pets.
+
+- `pet_sitter.rb` is the Pet sitter class, daughter of the User superclass. This class contains information only related to the pet sitter, such as abn, which at this stage of the application is not used, but in future development, it can be used for financial management.
+
+- `job.rb` contains the Job class. The Job class represents all the service provided by the pet sitter to a specific client, containing a list of tasks for each job, as well as the date of completion of the tasks and the client who requested it.
+
+- `pet.rb` contains the class Pet. It represents the pets of each client and contains information about the animal, such as name, age, type (whether cat or dog) and observations related to special needs for the pet's well-being.
+
+- `database.rb` is a file containing some methods directly related to the save function in the `database.json` file, such as adding, editing, deleting and obtaining elements in classes.
+
+- `ruby_petsitter_spec.rb` is the file that stores the unit tests related to the development of the application and the user experience.
 
 ---
-<!-- ## How use -->
-## 6. Diagram
+## 3. User Experience
+---
 
-## - Workflow diagram
-
-
-## - UML diagram
-
+### 1. User instructions
 
 ---
-## 7. Implementation plan
-
----
-## 8. User instructions
-
----
-## 9. Requirements
+### 2. Requirements
 
 ---
 ## Reference
