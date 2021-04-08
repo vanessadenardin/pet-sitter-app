@@ -75,8 +75,8 @@ class App
             menu = []
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            @last_menu = "menu_pet_sitter"
             go_to(input)
-            @last_menu = "menu_edit_pet_sitter"
             menu_edit_pet_sitter(input)
         end
     end
@@ -92,8 +92,8 @@ class App
             end
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            @last_menu = "main_menu"
             go_to(input)
-            @last_menu = "menu_pet_sitter"
             menu_edit_pet_sitter(input)
         end
     end
@@ -112,6 +112,10 @@ class App
             ]
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            case input
+            when "BACK"
+                menu_edit_client(pet["client_id"])
+            end
             go_to(input)
             pet_delete(pet)
             menu_edit_client(pet["client_id"])
@@ -202,6 +206,7 @@ class App
             menu.push({name: 'Add client', value: "ADD"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            @last_menu = "main_menu"
             go_to(input)
             case input
             when "ADD"
@@ -233,8 +238,8 @@ class App
             menu.push({name: 'Delete job', value: "DELETE"})
             menu = navigation(menu)
             input = @prompt.select("Tasks list: ", menu)
+            @last_menu = "menu_jobs"
             go_to(input)
-            @last_menu = "menu_edit_job"
             case input
             when "DELETE"
                 job_delete(job)
@@ -288,15 +293,15 @@ class App
                 menu.push({name: "#{job["id"] + 1}", value: job["id"]})
             end
             menu.push({name: 'Add job', value: "ADD"})
-            menu.push({name: 'Show all jobs', value: "JOBS"})
+            menu.push({name: 'Show all jobs', value: "ALL"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            @last_menu = "main_menu"
             go_to(input)
-            @last_menu = "menu_jobs"
             case input
             when "ADD"
                 job_add()
-            when "JOBS"
+            when "ALL"
                 jobs = @db.get_data("jobs")
             else
                 menu_edit_job(input)
