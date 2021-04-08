@@ -13,7 +13,7 @@ class App
     def main_menu()
         puts "My Petsitter App"
         puts "Welcome!"
-        puts '<>' * 20
+        puts '-' * 20
         # self.send("menu_clients")
         loop do
             # system 'clear'
@@ -85,9 +85,9 @@ class App
     end
 
     def menu_edit_client(id)
-        print "oi #{id}"
+        # print "oi #{id}"
         client = @db.get_by_id("clients", id)
-        print client
+        # print client
         client["pets_list"] = @db.get_pet_list_by_client_id(client["id"])
         loop do
             # system 'clear'
@@ -101,14 +101,20 @@ class App
             for pet in client["pets_list"]
                 menu.push({name: "#{pet["name"]}", value: pet})
             end
+            menu.push({name: 'Delete', value: "DELETE"})
             menu = navigation(menu)
             input = @prompt.select("Pets list: ", menu)
             go_to(input)
             @last_menu = "menu_clients"
+            menu_client_delete(client)
             menu_edit_pet(input)
         end
     end 
     
+    def menu_client_delete(client)
+        @db.delete("clients", client["id"])
+    end
+
     def menu_clients()
         loop do
             # system 'clear'
@@ -128,68 +134,91 @@ class App
         end
     end
 
+    def menu_edit_job(id)
+        # print "oi #{id}"
+        job = @db.get_by_id("jobs", id)
+
+        # job["job_list"] = @db.get_pet_list_by_client_id(job["id"])
+        loop do
+            # system 'clear'
+            puts "Job details:"
+            puts "Job ID: #{job["id"]}"
+            puts "Date: #{job["date"]}"
+            puts "Client: #{job["client_id"]}" #client name???
+            puts "Tasks list: #{job["list_tasks"].join(", ")}"
+            puts "-" * 20
+
+            menu = [
+                {name: 'Delete', value: "DELETE"}
+            ]
+            
+            menu = navigation(menu)
+            input = @prompt.select("Jobs list: ", menu)
+            go_to(input)
+            @last_menu = "menu_jobs"
+            menu_job_delete(job)
+            # menu_edit_job(input)
+        end
+    end 
+    
+    def menu_job_delete(job)
+        @db.delete("jobs", job["id"])
+    end
+
     def menu_jobs()
         loop do
             # system 'clear'
-            jobs = @db.get_all("jobs")
+            jobs = @db.get_class("jobs")
             # print(jobs)
-            # puts "You have #{id quantity jobs} jobs registered for the next 5 days."
+            puts "You have #{jobs.length} jobs registered."
             puts "List of jobs:"
-            input = @prompt.select('Menu:') do |menu|
-                for job in jobs
-                    menu.choice name: "#{job["name"]}", value: job
-                end
-                menu.choice name: 'Task', value: "TASKS"
-                menu.choice name: 'Back', value: "BACK"
-                menu.choice name: 'Home', value: "HOME"
-                menu.choice name: 'Exit', value: "EXIT"
+            menu = []
+            for job in jobs
+                menu.push({name: "#{job["id"] + 1}", value: job["id"]})
             end
-            puts '-' * 20
-            case input
-                when "TASKS"
-                    menu_tasks()
-                when "BACK"
-                    main_menu()
-                when "HOME"
-                    main_menu()
-                when "EXIT"
-                    exit
-                else
-                    print input
-            end
-            
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            go_to(input)
+            @last_menu = "menu_jobs"
+            menu_edit_job(input)
         end
     end
 
-    def menu_tasks()
-        loop do
-            # system 'clear'
-            tasks = @db.get_all("tasks")
-            # print(tasks)
-            # puts "You have #{id quantity tasks} tasks added for the #{client_id} #{job} job."
-            # puts "List of tasks:"
-            input = @prompt.select('List of tasks:') do |menu|
-                for task in tasks
-                    menu.choice name: "#{tasks["name"]}", value: task
-                end
-                menu.choice name: 'Back', value: "BACK"
-                menu.choice name: 'Home', value: "HOME"
-                menu.choice name: 'Exit', value: "EXIT"
-            end
-            puts '-' * 20
-            case input
-                when "BACK"
-                    main_menu()
-                when "HOME"
-                    main_menu()
-                when "EXIT"
-                    exit
-                else
-                    print input
-            end
-            
-        end
-    end
+    # def menu_tasks()
+
+    #     loop do
+    #         # system 'clear'
+    #         jobs = @db.get_class("jobs")
+    #         # print(jobs)
+    #         puts "You have #{jobs.length} jobs registered."
+    #         puts "List of jobs:"
+    #         menu = []
+    #         for job in jobs
+    #             menu.push({name: "#{job["id"] + 1}", value: job["id"]})
+    #         end
+    #         menu = navigation(menu)
+    #         input = @prompt.select("Menu: ", menu)
+    #         go_to(input)
+    #         @last_menu = "menu_jobs"
+    #         menu_edit_job(input)
+    #     end
+    #     loop do
+    #         # system 'clear'
+    #         tasks = @db.get_class("tasks")
+    #         # print(tasks)
+    #         puts "You have #{tasks.length} tasks added for job #{job["id"] + 1} for #{jobs["date"]}."
+    #         puts "List of tasks:"
+    #         menu = []                
+    #         for task in tasks
+    #             menu.push ({name: "#{tasks["name"]}", value: task["id"]})
+    #         end
+    #         menu = navigation(menu)
+    #         input = @prompt.select("Menu: ", menu)
+    #         go_to(input)
+    #         @last_menu = "menu_tasks"
+    #         # menu_edit_job(input)
+    #     end
+    # end
 
     def run()
         main_menu()

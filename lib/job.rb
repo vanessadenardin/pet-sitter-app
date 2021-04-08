@@ -5,7 +5,7 @@ class Job
         @id = id
         @date = date
         @client_id = client_id
-        @list_tasks = list_task
+        @list_tasks = []
     end
 
     # def add_task(list_tasks)
