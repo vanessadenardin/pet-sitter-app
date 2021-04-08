@@ -52,7 +52,7 @@ class Database
         end
     end
 
-    def get_class(class_name)
+    def get_data(class_name)
         return JSON.parse(File.read(@database_file))[class_name]
         
         rescue Errno::ENOENT
@@ -72,7 +72,7 @@ class Database
 
     def get_pet_list_by_client_id(client_id)
         pet_list = []
-        for pet in get_class("pets")
+        for pet in get_data("pets")
             if client_id == pet["client_id"]
                 pet_list.push(pet)
             end

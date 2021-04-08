@@ -1,5 +1,6 @@
 require_relative './client'
 require_relative './pet_sitter'
+require_relative './job'
 require_relative './database'
 require 'tty-prompt'
 
@@ -39,8 +40,8 @@ class App
     # menus that repeat on all methods
     def go_to(input)
         case input
-            # when "PROFILE"
-            #     print "PROFILE"
+            when "PROFILE"
+                menu_pet_sitter
             when "CLIENTS"
                 @last_menu = "main_menu"
                 menu_clients()
@@ -60,6 +61,49 @@ class App
         end
     end
 
+    # def menu_edit_pet_sitter(id)
+    #     # print "oi #{id}"
+    #     pet_sitter = @db.get_data("pet_sitters")
+    #     # print client
+    #     loop do
+    #         # system 'clear'
+    #         puts "Welcome to the pet sitter profile"
+    #         puts "Name: #{profile["name"]}"
+    #         puts "Contact: #{profile["contact"]}"
+    #         puts "Post Code: #{profile["post_code"]}"
+    #         puts "ABN: #{profile["abn"]}"
+    #         puts "-" * 20
+    #         menu = []
+    #         # for profile in pet_sitter
+    #         #     menu.push({name: "#{profile["name"]}", value: profile["id"]})
+    #         # end
+    #         menu.push({name: 'Delete', value: "DELETE"})
+    #         menu = navigation(menu)
+    #         input = @prompt.select("Menu: ", menu)
+    #         go_to(input)
+    #         @last_menu = "menu_clients"
+    #         # menu_pet_sitter_delete(pet_sitter)
+    #         menu_edit_pet_sitter(input)
+    #     end
+    # end
+
+    def menu_pet_sitter()
+        loop do
+            # system 'clear'
+            pet_sitter = @db.get_data("pet_sitters")
+            puts "Pet sitter profile"
+            menu = []
+            for profile in pet_sitter
+                menu.push({name: "#{profile["name"]}", value: profile["id"]})
+            end
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            go_to(input)
+            @last_menu = "menu_pet_sitter"
+            menu_edit_pet_sitter(input)
+        end
+    end
+
     def menu_edit_pet(pet)
         loop do
             # system 'clear'
@@ -69,9 +113,9 @@ class App
             puts "Type: #{pet["type"]}"
             puts "Observations: #{pet["observations"]}"
             puts "-" * 20
-            menu = [
-                {name: 'Delete', value: "DELETE"}
-            ]
+            # menu = [
+            #     {name: 'Delete', value: "DELETE"}
+            # ]
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             go_to(input)
@@ -118,7 +162,7 @@ class App
     def menu_clients()
         loop do
             # system 'clear'
-            clients = @db.get_class("clients")
+            clients = @db.get_data("clients")
             # print(clients)
             puts "You have #{clients.length} clients registered."
             puts "List of clients:"
@@ -168,7 +212,7 @@ class App
     def menu_jobs()
         loop do
             # system 'clear'
-            jobs = @db.get_class("jobs")
+            jobs = @db.get_data("jobs")
             # print(jobs)
             puts "You have #{jobs.length} jobs registered."
             puts "List of jobs:"
