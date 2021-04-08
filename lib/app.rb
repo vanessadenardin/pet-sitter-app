@@ -1,6 +1,7 @@
 require_relative './client'
 require_relative './pet_sitter'
 require_relative './job'
+require_relative './pet'
 require_relative './database'
 require 'tty-prompt'
 
@@ -61,31 +62,24 @@ class App
         end
     end
 
-    # def menu_edit_pet_sitter(id)
-    #     # print "oi #{id}"
-    #     pet_sitter = @db.get_data("pet_sitters")
-    #     # print client
-    #     loop do
-    #         # system 'clear'
-    #         puts "Welcome to the pet sitter profile"
-    #         puts "Name: #{profile["name"]}"
-    #         puts "Contact: #{profile["contact"]}"
-    #         puts "Post Code: #{profile["post_code"]}"
-    #         puts "ABN: #{profile["abn"]}"
-    #         puts "-" * 20
-    #         menu = []
-    #         # for profile in pet_sitter
-    #         #     menu.push({name: "#{profile["name"]}", value: profile["id"]})
-    #         # end
-    #         menu.push({name: 'Delete', value: "DELETE"})
-    #         menu = navigation(menu)
-    #         input = @prompt.select("Menu: ", menu)
-    #         go_to(input)
-    #         @last_menu = "menu_clients"
-    #         # menu_pet_sitter_delete(pet_sitter)
-    #         menu_edit_pet_sitter(input)
-    #     end
-    # end
+    def menu_edit_pet_sitter(id)
+        pet_sitter = @db.get_by_id("pet_sitters", id)
+        loop do
+            # system 'clear'
+            puts "Pet sitter details"
+            puts "Name: #{pet_sitter["name"]}"
+            puts "Contact: #{pet_sitter["contact"]}"
+            puts "Post Code: #{pet_sitter["post_code"]}"
+            puts "ABN: #{pet_sitter["abn"]}"
+            puts "-" * 20
+            menu = []
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            go_to(input)
+            @last_menu = "menu_edit_pet_sitter"
+            menu_edit_pet_sitter(input)
+        end
+    end
 
     def menu_pet_sitter()
         loop do
@@ -113,50 +107,85 @@ class App
             puts "Type: #{pet["type"]}"
             puts "Observations: #{pet["observations"]}"
             puts "-" * 20
-            # menu = [
-            #     {name: 'Delete', value: "DELETE"}
-            # ]
+            menu = [
+                {name: 'Delete', value: "DELETE"}
+            ]
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             go_to(input)
-            menu_pet_delete(pet)
+            pet_delete(pet)
             menu_edit_client(pet["client_id"])
+            # menu_edit_client(pet["client_id"])
         end
     end
 
-    def menu_pet_delete(pet)
+    def pet_delete(pet)
         @db.delete("pets", pet["id"])
+    end
+
+    def pet_add(client_id)
+        name = @prompt.ask("Name?")
+        age = @prompt.ask("Age?")
+        type = @prompt.ask("Type?")
+        observations = @prompt.ask("Observations: ")
+        
+        pet = Pet.new(name, age, type, observations, client_id)
+        
+        @db.add("pets", pet)
     end
 
     def menu_edit_client(id)
         # print "oi #{id}"
         client = @db.get_by_id("clients", id)
         # print client
-        client["pets_list"] = @db.get_pet_list_by_client_id(client["id"])
+        
         loop do
             # system 'clear'
+            client["pet_list"] = @db.get_pet_list_by_client_id(client["id"])
             puts "Client details"
             puts "Name: #{client["name"]}"
             puts "Contact: #{client["contact"]}"
             puts "Post Code: #{client["post_code"]}"
-            puts "Client has #{client["pets_list"].length} pets registered."
+            puts "Client has #{client["pet_list"].length} pets registered."
             puts "-" * 20
             menu = []
-            for pet in client["pets_list"]
+            for pet in client["pet_list"]
                 menu.push({name: "#{pet["name"]}", value: pet})
             end
-            menu.push({name: 'Delete', value: "DELETE"})
+            menu.push({name: 'Add pet', value: "ADD"})
+            menu.push({name: 'Delete client', value: "DELETE"})
             menu = navigation(menu)
             input = @prompt.select("Pets list: ", menu)
             go_to(input)
             @last_menu = "menu_clients"
-            menu_client_delete(client)
-            menu_edit_pet(input)
+            case input
+            when "ADD"
+                pet_add(client["id"])
+            when "DELETE"
+                client_delete(client)
+                menu_clients()
+            else
+                menu_edit_pet(input)
+            end
+            
         end
     end 
     
-    def menu_client_delete(client)
+    def client_delete(client)
+        for pet in client["pet_list"]
+            @db.delete("pets", pet["id"])
+        end
         @db.delete("clients", client["id"])
+    end
+
+    def client_add()
+        name = @prompt.ask("Name?")
+        contact = @prompt.ask("Contact?")
+        post_code = @prompt.ask("Post Code?")
+        
+        client = Client.new(name, contact, post_code)
+        
+        @db.add("clients", client)
     end
 
     def menu_clients()
@@ -170,11 +199,17 @@ class App
             for client in clients
                 menu.push({name: "#{client["name"]}", value: client["id"]})
             end
+            menu.push({name: 'Add client', value: "ADD"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             go_to(input)
-            @last_menu = "menu_clients"
-            menu_edit_client(input)
+            case input
+            when "ADD"
+                client_add()
+            else
+                @last_menu = "menu_clients"
+                menu_edit_client(input)
+            end
         end
     end
 
@@ -189,24 +224,55 @@ class App
             puts "Job ID: #{job["id"]}"
             puts "Date: #{job["date"]}"
             puts "Client: #{job["client_id"]}" #client name???
-            puts "Tasks list: #{job["list_tasks"].join(", ")}"
             puts "-" * 20
-
-            menu = [
-                {name: 'Delete', value: "DELETE"}
-            ]
-            
+            menu = []
+            for task in job["list_tasks"]
+                menu.push({name: task, value: task})
+            end
+            menu.push({name: 'Add task', value: "ADD"})
+            menu.push({name: 'Delete job', value: "DELETE"})
             menu = navigation(menu)
-            input = @prompt.select("Jobs list: ", menu)
+            input = @prompt.select("Tasks list: ", menu)
             go_to(input)
-            @last_menu = "menu_jobs"
-            menu_job_delete(job)
+            @last_menu = "menu_edit_job"
+            case input
+            when "DELETE"
+                job_delete(job)
+                menu_jobs()
+            else
+                menu_edit_job(input)
+            end
+            
             # menu_edit_job(input)
         end
     end 
     
-    def menu_job_delete(job)
+    def job_delete(job)
         @db.delete("jobs", job["id"])
+    end
+
+    def job_add()
+        list_tasks = []
+        date = @prompt.ask("Date:")
+        menu = []
+        for client in @db.get_data("clients")
+            menu.push({name: client["name"], value: client["id"]})
+        end
+        client_id = @prompt.select("", menu)
+
+        add_more_tasks = true
+        while(add_more_tasks)
+            list_tasks.push(@prompt.ask("Add a task: "))
+            menu = [
+                {name: "Yes", value: true},
+                {name: "No", value: false}
+            ]
+            add_more_tasks = @prompt.select("Add another one?", menu)
+        end
+        print list_tasks
+        job = Job.new(date, client_id, list_tasks)
+        
+        @db.add("jobs", job)
     end
 
     def menu_jobs()
@@ -220,11 +286,17 @@ class App
             for job in jobs
                 menu.push({name: "#{job["id"] + 1}", value: job["id"]})
             end
+            menu.push({name: 'Add job', value: "ADD"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             go_to(input)
             @last_menu = "menu_jobs"
-            menu_edit_job(input)
+            case input
+            when "ADD"
+                job_add()
+            else
+                menu_edit_job(input)
+            end
         end
     end
 

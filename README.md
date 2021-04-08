@@ -3,33 +3,23 @@
 ## Table of Contents
 
 1. [Development Process](#development-process)
-
     1. [Repository link](#Repository-link)
-
     1. [Software development plan](#Software-development-plan)
-
     1. [Diagram](#Diagram)
     - [Workflow diagram](#Workflow-diagram)
     - [UML diagram](#UML-diagram)
 
-
 1. [About Application](#about-application)
-
     1. [Application purpose and scope](#Application-purpose-and-scope)
         - [Description](#Description)
         - [Problem/Solution](#problem/solution)
         - [Target Audience](#Target-Audience)
-
     1. [Features](#Features)
-
     1. [Code structure](#Code-structure)
-
     1. [Implementation plan](#Implementation-plan)
 
 1. [User Experience](#user-experience)
-
     1. [User instructions](#User-instructions)
-
     1. [Requirements](#Requirements)
 
 [Reference](#Reference)

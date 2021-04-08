@@ -14,16 +14,12 @@ class Database
     
     def add(class_name, object)
         @data = get_all()
-        object["id"] = get_new_id(class_name)
-        found = false
-        for item in @data[class_name]
-            if item["id"] == object["id"]
-                found = true
-            end
-        end
-        if !found
-            @data[class_name].push(object)
-        end 
+        
+        id = get_new_id(class_name)
+        object.update_id(id)
+        
+        @data[class_name].push(object.to_hash())
+        
         save()
     end
 
