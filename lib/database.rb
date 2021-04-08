@@ -1,4 +1,5 @@
 require 'json'
+require 'date'
 
 # class to interact with the json file as a database
 class Database
@@ -75,6 +76,20 @@ class Database
         end
 
         return pet_list
+    end
+
+    def get_jobs_last_7_days()
+        @data = get_all()
+        now = Time.now.to_date
+        jobs = []
+        for job in @data["jobs"]
+            parsed_date = Date.strptime(job["date"], "%d/%m/%Y")
+            days_difference = (parsed_date - now).to_i
+            if days_difference <= 7 && days_difference >= 0
+                jobs.push(job)
+            end
+        end
+        return jobs
     end
     
     # find latest id used and return one more

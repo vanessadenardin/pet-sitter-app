@@ -278,9 +278,9 @@ class App
     def menu_jobs()
         loop do
             # system 'clear'
-            jobs = @db.get_data("jobs")
+            jobs = @db.get_jobs_last_7_days()
             # print(jobs)
-            puts "You have #{jobs.length} jobs registered."
+            puts "You have #{jobs.length} jobs for the next 7 days."
             puts "List of jobs:"
             menu = []
             for job in jobs
