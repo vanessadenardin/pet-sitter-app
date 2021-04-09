@@ -58,8 +58,6 @@ I chose to use GitHub projects to organize what I needed to do. I separate into 
 ## - UML diagram
 
 
----
-## 4. Implementation plan
 
 ---
 ## 2. About Application
@@ -67,24 +65,20 @@ I chose to use GitHub projects to organize what I needed to do. I separate into 
 
 ### 1. Application purpose and scope
 
-
 ## - Description
 
-
-App developed to help pet sitters to manage their clients’ pets and tasks data. The app will help storing various information keeping records of all clients pet’s including any task related to support the pet welfare while the owners are away.
+App developed to help pet sitters to manage their clients’ pets and tasks data. The app will help storing various information keeping records of all clients and its pets including any task related to support the pet welfare while the owners are away.
 
 
 ## - Problem/Solution
 
-
-The application was initially developed to replace manual data entry of pet sitters. Having as the main feature to assist in the management of service orders when caring for different pets from different customers while the pet owner is absent.
+The application was initially developed to replace manual data entry of pet sitters. Having as the main feature to assist in the management of service orders, clients contact when caring for different pets from different customers while the pet's owner is absent.
 
 
 ## - Target audience
 
-
-In this first phase, the application is intended for a single user (pet sitter) and intends to keep track of all customers and pets.
-The application aims to help the pet caregiver to define and monitor task lists and pet information to provide the best care meeting with the needs of the pet owner and the animal itself during the owner's absence.
+In this first phase, the application is intended for a *single user* (pet sitter) and intends to keep track of all customers, pets and job orders.
+The application aims to help the pet caregiver to define and monitor task lists and pet information to provide the best care meeting the needs of the pet owner and the animal itself during the owner's absence.
 
 ---
 ### 2. Features
@@ -95,44 +89,48 @@ The application aims to help the pet caregiver to define and monitor task lists 
 
 - Welcome Login
 
-Welcome screen and login page (username and password) to access the application.
-In this first phase, the password is not encrypted, which can be considered an ethical issue, as it gives a false sense of security. Another ethical problem can also be considered when data storage is done.
+_Welcome screen_ and _login page_ (username and password) to access the application.
+In this first phase, the password is not encrypted, which can be considered an *ethical issue*, as it gives a false sense of security. Another ethical problem can also be considered when data storage is done without encryption.
 
 - Home Menu
 
-The Home menu is displayed as soon as the login is succefully. The initial menu will allow the user to access personal information, customer and pet data, as well as information about service lists containing date, customer address, type of animal, special requests.
+The _Home menu_ is displayed as soon as the login is succefully. The initial menu will allow the user to access personal information, customer and pet data, as well as information about service lists containing date, customer address, type of animal, special requests.
 
 - Pet Sitter profile
 
-The Pet sitter page in this first version of the application serves only to maintain the storage of personal information, but as a future version, it can be useful when printing invoices.
+The _Pet sitter page_ in this first version of the application serves only to maintain the storage of personal information, but as a future version, it can be useful when printing invoices.
 
 - Client's details
 
-The Client's page allows the user (pet sitter) to track all existing customers, as well as add, edit and delete information.
+The _Client page_ allows the user (pet sitter) to track all existing customers, as well add, edit and delete information.
 On this page the user can also access pet data, adding, changing and deleting information related to pets.
 
 - Pet's information
 
-The Pet's page allows the user (pet sitter) to track all existing pets linked for the clients registered, as well as add, edit and delete pets.
+The _Pet page_ allows the user (pet sitter) to track all existing pets linked for the clients registered, as well as add, edit and delete pets.
 
 - Job orders
 
-A list of the next 7 days will appear on the job page, but it also allows the user to view previous and future records, add a new one, edit and delete any job.
-This page contains data about the pet sitter, clients and pets, as well as a list of tasks required for each service added.
+A list of the next 7 days will appear on the _Job page_, but it also allows the user to view previous and future records, add a new one, edit and delete any job.
+This page contains data about the pet sitter, clients and pets, as well a list of tasks required for each service added.
 
 - Tasks' list
 
-A list of tasks required to complete the job and the task page will appear, allowing the user to view the status of the task list and how many tasks need to be completed, add a new one, edit and delete any task.
+A list of tasks required to complete the job will appear in the _Task page_, allowing the user to view the status of the task list and how many tasks need to be completed, add a new one, edit and delete any task.
 
 - Back option
 
-All menus allow the user to return to the previous menu or return to the initial menu, depending on the user's needs.
+All menus allow the user to return to the previous menu or return to the home menu by clicking the _Back_ button or the _Home_ button, depending on the user's needs.
 
 - Log out
 
 Extras:
+
+In the first phase, some resources could not be added due to the time limit. However, there is a desire to expand the features of this application by adding:
+
+- Add more than 1 pet sitter
 - Contact list
-- Mark completed tasks
+<!-- - Mark completed tasks -->
 - Financial management
 - Availability calendar
 - Pet photo
