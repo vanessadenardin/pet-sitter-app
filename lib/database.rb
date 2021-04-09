@@ -16,9 +16,6 @@ class Database
     def add(class_name, object)
         @data = get_all()
         
-        id = get_new_id(class_name)
-        object.update_id(id)
-        
         @data[class_name].push(object.to_hash())
         
         save()
@@ -41,70 +38,82 @@ class Database
     #     end
     #     save()
     # end
-
-    def edit_pet(class_name, object)
+    def edit(class_name, object)
         @data = get_all()
         # go through all items in the file
-        for item in @data[class_name]
-            # if match the ID of the edit object - replace existing one
+        @data[class_name].map!{|item|
             if item["id"] == object["id"]
-                # update existing values (item) from the edited pet (object)
-                item["name"] = object["name"]
-                item["age"] = object["age"]
-                item["observations"] = object["observations"]
-                # item = object
-                
+                object
+            else
+                item
             end
-        end
+        }
         save()
     end
 
-    def edit_client(class_name, object)
-        @data = get_all()
-        # go through all items in the file
-        for item in @data[class_name]
-            # if match the ID of the edit object - replace existing one
-            if item["id"] == object["id"]
-                # update existing values (item) from the edited pet (object)
-                item["name"] = object["name"]
-                item["contact"] = object["contact"]
-                item["post_code"] = object["post_code"]
-                # item = object
+    # def edit_pet(class_name, object)
+    #     @data = get_all()
+    #     # go through all items in the file
+    #     for item in @data[class_name]
+    #         # if match the ID of the edit object - replace existing one
+    #         if item["id"] == object["id"]
+    #             # update existing values (item) from the edited pet (object)
+    #             item["name"] = object["name"]
+    #             item["age"] = object["age"]
+    #             item["observations"] = object["observations"]
+    #             # item = object
                 
-            end
-        end
-        save()
-    end
+    #         end
+    #     end
+    #     save()
+    # end
 
-    def edit_task(class_name, object)
-        @data = get_all()
-        # go through all items in the file
-        for item in @data[class_name]
-            # if match the ID of the edit object - replace existing one
-            if item["id"] == object["id"]
-                # update existing values (item) from the edited pet (object)
-                item["description"] = object["description"]
-                item["status"] = object["status"]
+    # def edit_client(class_name, object)
+    #     @data = get_all()
+    #     # go through all items in the file
+    #     for item in @data[class_name]
+    #         # if match the ID of the edit object - replace existing one
+    #         if item["id"] == object["id"]
+    #             # update existing values (item) from the edited pet (object)
+    #             item["name"] = object["name"]
+    #             item["contact"] = object["contact"]
+    #             item["post_code"] = object["post_code"]
+    #             # item = object
                 
-            end
-        end
-        save()
-    end
+    #         end
+    #     end
+    #     save()
+    # end
+
+    # def edit_task(class_name, object)
+    #     @data = get_all()
+    #     # go through all items in the file
+    #     for item in @data[class_name]
+    #         # if match the ID of the edit object - replace existing one
+    #         if item["id"] == object["id"]
+    #             # update existing values (item) from the edited pet (object)
+    #             item["description"] = object["description"]
+    #             item["status"] = object["status"]
+                
+    #         end
+    #     end
+    #     save()
+    # end
     
-    def edit_job(class_name, object)
-        @data = get_all()
-        # go through all items in the file
-        for item in @data[class_name]
-            # if match the ID of the edit object - replace existing one
-            if item["id"] == object["id"]
-                # update existing values (item) from the edited pet (object)
-                item["date"] = object["date"]
-                # item = object
+    # def edit_job(class_name, object)
+    #     @data = get_all()
+    #     # go through all items in the file
+    #     for item in @data[class_name]
+    #         # if match the ID of the edit object - replace existing one
+    #         if item["id"] == object["id"]
+    #             # update existing values (item) from the edited pet (object)
+    #             item["date"] = object["date"]
+    #             # item = object
                 
-            end
-        end
-        save()
-    end
+    #         end
+    #     end
+    #     save()
+    # end
 
     def delete(class_name, id)
         @data = get_all()
@@ -181,6 +190,7 @@ class Database
     
     # find latest id used and return one more
     def get_new_id(class_name)
+        @data = get_all()
         # if array is empty return first id 0
         if @data[class_name].length == 0
             return 0

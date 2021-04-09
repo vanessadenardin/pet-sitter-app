@@ -65,10 +65,6 @@ class App
                 main_menu()
             when "EXIT"
                 exit()
-            when "CLIENT_ADD"
-            when "CLIENT_DELETE"
-            when "PET_ADD"
-            when "PET_DELETE"
         end
     end
 
@@ -84,11 +80,56 @@ class App
             puts "ABN: #{pet_sitter["abn"]}"
             puts "-" * 20
             menu = []
+            menu.push({name: 'Edit pet sitter', value: "EDIT"})
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             @last_menu = "menu_pet_sitter"
             go_to(input)
+            case input
+            when "EDIT"
+                pet_sitter = pet_sitter_edit(pet_sitter)
+            end
         end
+    end
+
+    def pet_sitter_edit(pet_sitter)
+        menu = [
+            {name: "Yes", value: true},
+            {name: "No", value: false}
+        ]
+
+        if @prompt.select("Edit name? ", menu)
+            pet_sitter["name"] = @prompt.ask("Name: ") do |q|
+                q.required true
+                q.messages[:required?] = "Required name"
+                q.modify :capitalize
+            end
+        end
+
+        if @prompt.select("Edit Email? ", menu)
+            pet_sitter["contact"] = @prompt.ask("Email: ") do |q|
+                q.required true
+                q.messages[:required?] = "Required email address"
+                q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+            end
+        end
+
+        if @prompt.select("Edit Post Code? ", menu)
+            pet_sitter["post_code"] = @prompt.ask("Post code: ", convert: :integer) do |q|
+                q.messages[:valid?] = "Post code has to be a number"
+            end
+        end
+
+        if @prompt.select("Edit ABN? ", menu)
+            pet_sitter["abn"] = @prompt.ask("ABN: ") do |q|
+                q.required true
+                q.messages[:required?] = "Required abn"
+                q.modify :capitalize
+            end
+        end
+        
+        @db.edit("pet_sitters", pet_sitter)
+        return pet_sitter
     end
 
     def menu_pet_sitter()
@@ -166,7 +207,7 @@ class App
             end
         end
         
-        @db.edit_pet("pets", pet)
+        @db.edit("pets", pet)
         return pet
     end
 
@@ -197,7 +238,8 @@ class App
             q.modify :capitalize
         end
         
-        pet = Pet.new(name, age, type, observations, client_id)
+        new_id = @db.get_new_id("pets")
+        pet = Pet.new(new_id, name, age, type, observations, client_id)
         
         @db.add("pets", pet)
     end
@@ -218,13 +260,15 @@ class App
             puts "-" * 20
             menu = []
             for pet in client["pet_list"]
-                menu.push({name: "#{pet["name"]}", value: pet})
+                menu.push({name: pet["name"], value: pet})
             end
             menu.push({name: 'Add pet', value: "ADD"})
             menu.push({name: 'Delete client', value: "DELETE"})
             menu.push({name: 'Edit client', value: "EDIT"})
             menu = navigation(menu)
             input = @prompt.select("Pets list: ", menu)
+            @last_menu = "menu_clients"
+            go_to(input)
 
             case input
             when "ADD"
@@ -235,9 +279,9 @@ class App
             when "EDIT"
                 client = client_edit(client)
                 menu_edit_client(id)
+            else
+                menu_edit_pet(input)
             end
-            go_to(input)
-            @last_menu = "menu_clients"
         end
     end 
     
@@ -265,11 +309,12 @@ class App
         end
 
         if @prompt.select("Edit Post Code? ", menu)
-            client["post_code"] = @prompt.ask("Post code: ", convert: :integer)
-            q.messages[:valid?] = "Post code has to be a number"
+            client["post_code"] = @prompt.ask("Post code: ", convert: :integer) do |q|
+                q.messages[:valid?] = "Post code has to be a number"
+            end
         end
         
-        @db.edit_client("clients", client)
+        @db.edit("clients", client)
         return client
     end
 
@@ -284,7 +329,9 @@ class App
     def client_add()
         name = @prompt.ask("Client Name?") do |q|
             q.required true
+            q.validate /[a-z]+/
             q.messages[:required?] = "Required client name"
+            q.messages[:valid?] = "Name need to start with a letter."
             q.modify :capitalize
         end
 
@@ -298,7 +345,8 @@ class App
             q.messages[:valid?] = "Post code has to be a number"
         end
 
-        client = Client.new(name, contact, post_code)
+        new_id = @db.get_new_id("clients")
+        client = Client.new(new_id, name, contact, post_code)
         
         @db.add("clients", client)
     end
@@ -375,7 +423,7 @@ class App
 
         task["status"] = @prompt.select("Completed? ", menu)
 
-        @db.edit_task("tasks", task)
+        @db.edit("tasks", task)
         return task
     end
 
@@ -390,7 +438,8 @@ class App
             q.modify :capitalize
         end
 
-        task = Task.new(description, job_id)
+        new_id = @db.get_new_id("tasks")
+        task = Task.new(new_id, description, job_id)
         
         @db.add("tasks", task)
     end
@@ -451,16 +500,19 @@ class App
             end
         end
         
-        @db.edit_job("jobs", job)
+        @db.edit("jobs", job)
         return job
     end
 
     def job_delete(job)
+        for task in job["list_tasks"]
+            @db.delete("tasks", task["id"])
+        end
+
         @db.delete("jobs", job["id"])
     end
 
     def job_add()
-        list_tasks = []
         date = @prompt.ask("Date:")do |q|
             q.required true        
             q.messages[:required?] = "Required date (dd/mm/yyyy)"
@@ -472,24 +524,20 @@ class App
         end
         client_id = @prompt.select("", menu)
 
+        new_id = @db.get_new_id("jobs")
+        job = Job.new(new_id, date, client_id)
+
+        @db.add("jobs", job)
+
         add_more_tasks = true
         while(add_more_tasks)
-            # list_tasks.push(@prompt.ask("Add a task: "))do |q|
-            task_add.push(@prompt.ask("Add a task: ")) do |q|
-                q.required true
-                q.messages[:required?] = "Required tasks description"
-                q.modify :capitalize
-            end
+            task_add(job.id)
             menu = [
                 {name: "Yes", value: true},
                 {name: "No", value: false}
             ]
             add_more_tasks = @prompt.select("Add another one?", menu)
         end
-        print list_tasks
-        job = Job.new(date, client_id, list_tasks)
-        
-        @db.add("jobs", job)
     end
 
     def menu_jobs()
@@ -503,7 +551,8 @@ class App
 
             menu = []
             for job in jobs
-                menu.push({name: "#{job["id"] + 1}", value: job["id"]})
+                job["client"] = @db.get_by_id("clients", job["client_id"])
+                menu.push({name: "#{job["client"]["name"]} - #{job["date"]}", value: job["id"]})
             end
             menu.push({name: 'Add job', value: "ADD"})
             menu.push({name: 'Show all jobs', value: "ALL"})

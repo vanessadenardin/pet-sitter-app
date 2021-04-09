@@ -1,14 +1,10 @@
 class Task
 
-    def initialize(description, job_id)
-        @id = -1
+    def initialize(id, description, job_id)
+        @id = id
         @description = description
         @status = false # status non-completed
         @job_id = job_id
-    end
-
-    def update_id(id)
-        @id = id
     end
 
     def to_hash()
