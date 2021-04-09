@@ -380,6 +380,7 @@ class App
 
     def menu_clients()
         loop do
+            system 'clear'
             clients = @db.get_data("clients")
             puts @headline
             headline("Clients")
@@ -470,6 +471,7 @@ class App
 
     def menu_edit_job(id)
         loop do
+            system 'clear'
             job = @db.get_by_id("jobs", id)
             job["list_tasks"] = @db.get_task_list_by_job_id(job["id"])
             job["client"] = @db.get_by_id("clients", job["client_id"])
@@ -598,6 +600,7 @@ class App
         # variable to control changing display messages
         next_7_days = true
         loop do
+            system 'clear'
             headline("Jobs")
             puts "You have #{jobs.length.to_s.colorize(:cyan)} jobs" + "#{next_7_days ? " for the next 7 days." : "."}"
             puts @headline

@@ -44,7 +44,7 @@ When starting the development of this application I did some brainstorms to assi
 
 I chose to use GitHub projects to organize what I needed to do. I separate into cards according to the assignment requirements, adding a related card to complete the requirement. On each card, I added a checklist to verify that all plans/ideas were completed at the end of the application's development. Below is an example of a GitHub project during app development, I also added the public link to the GitHub project.
 
-![GitHub-projects](/docs/GitHub-projects.png)
+![GitHub projects](/docs/GitHub-projects.png)
 
 [GitHub Projects link here](https://github.com/vanessadenardin/pet-sitter-app/projects/1)
 
@@ -92,31 +92,55 @@ The application aims to help the pet caregiver to define and monitor task lists 
 _Welcome screen_ and _login page_ (username and password) to access the application.
 In this first phase, the password is not encrypted, which can be considered an *ethical issue*, as it gives a false sense of security. Another ethical problem can also be considered when data storage is done without encryption.
 
+![Welcome login](/docs/welcome-login.png)
+
 - Home Menu
 
 The _Home menu_ is displayed as soon as the login is succefully. The initial menu will allow the user to access personal information, customer and pet data, as well as information about service lists containing date, customer address, type of animal, special requests.
 
+![Home](/docs/home.png)
+
 - Pet Sitter profile
 
 The _Pet sitter page_ in this first version of the application serves only to maintain the storage of personal information, but as a future version, it can be useful when printing invoices.
+
+![Pet Sitter screen](/docs/petsitter.png)
+
+![Pet Sitter details](/docs/petsitter-details.png)
 
 - Client's details
 
 The _Client page_ allows the user (pet sitter) to track all existing customers, as well add, edit and delete information.
 On this page the user can also access pet data, adding, changing and deleting information related to pets.
 
-- Pet's information
+![Client](/docs/client.png)
+
+![Client details](/docs/client-details.png)
+
+- Pet's details
 
 The _Pet page_ allows the user (pet sitter) to track all existing pets linked for the clients registered, as well as add, edit and delete pets.
+
+![Pet details](/docs/pet-details.png)
 
 - Job orders
 
 A list of the next 7 days will appear on the _Job page_, but it also allows the user to view previous and future records, add a new one, edit and delete any job.
 This page contains data about the pet sitter, clients and pets, as well a list of tasks required for each service added.
 
+![Jobs](/docs/jobs-next-7days.png)
+
+![All jobs](/docs/list-all-jobs.png)
+
+
+
 - Tasks' list
 
 A list of tasks required to complete the job will appear in the _Task page_, allowing the user to view the status of the task list and how many tasks need to be completed, add a new one, edit and delete any task.
+
+![Job details without task added](/docs/job-details.png)
+
+![Job details with a tasks' list](/docs/list-tasks.png)
 
 - Back option
 
