@@ -181,23 +181,44 @@ class App
             end
             menu.push({name: 'Add pet', value: "ADD"})
             menu.push({name: 'Delete client', value: "DELETE"})
+            menu.push({name: 'Edit client', value: "EDIT"})
             menu = navigation(menu)
             input = @prompt.select("Pets list: ", menu)
-            go_to(input)
-            @last_menu = "menu_clients"
             case input
             when "ADD"
                 pet_add(client["id"])
             when "DELETE"
                 client_delete(client)
                 menu_clients()
-            else
-                menu_edit_pet(input)
+            when "EDIT"
+                client = client_edit(client)
+                menu_edit_client(id)
             end
-            
+            go_to(input)
+            @last_menu = "menu_clients"
+
         end
     end 
     
+    def client_edit(client)
+        menu = [
+            {name: "Yes", value: true},
+            {name: "No", value: false}
+        ]
+        if @prompt.select("Edit name? ", menu)
+            client["name"] = @prompt.ask("Name: ")
+        end
+        if @prompt.select("Edit Contact? ", menu)
+            client["contact"] = @prompt.ask("Contact: ")
+        end
+        if @prompt.select("Edit Post Code? ", menu)
+            client["post_code"] = @prompt.ask("Post code: ")
+        end
+        
+        @db.edit_client("clients", client)
+        return client
+    end
+
     def client_delete(client)
         for pet in client["pet_list"]
             @db.delete("pets", pet["id"])
@@ -258,23 +279,39 @@ class App
                 menu.push({name: task, value: task})
             end
             menu.push({name: 'Add task', value: "ADD"})
+            menu.push({name: 'Edit job date', value: "EDIT"})
             menu.push({name: 'Delete job', value: "DELETE"})
             menu = navigation(menu)
             input = @prompt.select("Tasks list: ", menu)
             @last_menu = "menu_jobs"
-            go_to(input)
             case input
             when "DELETE"
                 job_delete(job)
                 menu_jobs()
-            else
-                menu_edit_job(input)
+            when "EDIT"
+                job = job_edit(job)
+                menu_edit_job(id)
+
             end
+            go_to(input)
             
-            # menu_edit_job(input)
+
         end
     end 
     
+    def job_edit(job)
+        menu = [
+            {name: "Yes", value: true},
+            {name: "No", value: false}
+        ]
+        if @prompt.select("Edit date? ", menu)
+            job["date"] = @prompt.ask("Date: ")
+        end
+        
+        @db.edit_job("jobs", job)
+        return job
+    end
+
     def job_delete(job)
         @db.delete("jobs", job["id"])
     end
