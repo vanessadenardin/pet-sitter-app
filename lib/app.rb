@@ -17,6 +17,10 @@ class App
         @artii = Artii::Base.new
         @headline = ("-" * 80).colorize(:magenta)
         @emoji = Emojis.new
+        @yes_or_no = [
+            {name: "Yes", value: true},
+            {name: "No", value: false}
+        ]
         # print @emoji.list
         # puts String.colors
     end
@@ -93,10 +97,6 @@ class App
     end
 
     def pet_sitter_edit(pet_sitter)
-        menu = [
-            {name: "Yes", value: true},
-            {name: "No", value: false}
-        ]
 
         if @prompt.select("Edit name? ", menu)
             pet_sitter["name"] = @prompt.ask("Name: ") do |q|
@@ -182,12 +182,7 @@ class App
     end
 
     def pet_edit(pet)
-        menu = [
-            {name: "Yes", value: true},
-            {name: "No", value: false}
-        ]
-
-        if @prompt.select("Edit pet name? ", menu)
+        if @prompt.select("Edit pet name? ", @yes_or_no)
             pet["name"] = @prompt.ask("Name: ")do |q|
                 q.required true
                 q.validate /[a-z]+/
@@ -197,7 +192,7 @@ class App
             end
         end
 
-        if @prompt.select("Edit pet age? ", menu)
+        if @prompt.select("Edit pet age? ", @yes_or_no)
             pet["age"] = @prompt.ask("Age: ", convert: :integer) do |q|
                 q.required true
                 q.messages[:required?] = "Required pet age"
@@ -205,7 +200,7 @@ class App
             end
         end
 
-        if @prompt.select("Edit Observations? ", menu)
+        if @prompt.select("Edit Observations? ", @yes_or_no)
             pet["observations"] = @prompt.ask("Observations: ") do |q|
                 q.modify :capitalize
             end
@@ -292,12 +287,7 @@ class App
     end 
     
     def client_edit(client)
-        menu = [
-            {name: "Yes", value: true},
-            {name: "No", value: false}
-        ]
-
-        if @prompt.select("Edit client name? ", menu)
+        if @prompt.select("Edit client name? ", @yes_or_no)
             client["name"] = @prompt.ask("Name: ") do |q|
                 q.required true
                 q.validate /[a-z]+/
@@ -307,7 +297,7 @@ class App
             end
         end
 
-        if @prompt.select("Edit Email? ", menu)
+        if @prompt.select("Edit Email? ", @yes_or_no)
             client["contact"] = @prompt.ask("Email: ") do |q|
                 q.required true
                 q.messages[:required?] = "Required client email address"
@@ -315,7 +305,7 @@ class App
             end
         end
 
-        if @prompt.select("Edit Post Code? ", menu)
+        if @prompt.select("Edit Post Code? ", @yes_or_no)
             client["post_code"] = @prompt.ask("Post code: ", convert: :integer) do |q|
                 q.messages[:valid?] = "Post code has to be a number"
             end
@@ -415,12 +405,7 @@ class App
     end
 
     def task_edit(task)
-        menu = [
-            {name: "Yes", value: true},
-            {name: "No", value: false}
-        ]
-
-        if @prompt.select("Edit description? ", menu)
+        if @prompt.select("Edit description? ", @yes_or_no)
             task["description"] = @prompt.ask("Description: ")do |q|
             q.required true
             q.messages[:required?] = "Required  tasks description"
@@ -428,7 +413,7 @@ class App
             end
         end
 
-        task["status"] = @prompt.select("Completed? ", menu)
+        task["status"] = @prompt.select("Completed? ", @yes_or_no)
 
         @db.edit("tasks", task)
         return task
@@ -495,14 +480,9 @@ class App
     end 
     
     def job_edit(job)
-        menu = [
-            {name: "Yes", value: true},
-            {name: "No", value: false}
-        ]
-
-        if @prompt.select("Edit date? ", menu)
-            job["date"] = @prompt.ask("Date: ")do |q|
-                q.required true        
+        if @prompt.select("Edit date? ", @yes_or_no)
+            job["date"] = @prompt.ask("Date (dd/mm/YYYY): ", convert: :date)do |q|
+                q.required true
                 q.messages[:required?] = "Required date (dd/mm/yyyy)"
             end
         end
@@ -520,7 +500,7 @@ class App
     end
 
     def job_add()
-        date = @prompt.ask("Date:")do |q|
+        date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
             q.required true        
             q.messages[:required?] = "Required date (dd/mm/yyyy)"
         end
@@ -539,11 +519,7 @@ class App
         add_more_tasks = true
         while(add_more_tasks)
             task_add(job.id)
-            menu = [
-                {name: "Yes", value: true},
-                {name: "No", value: false}
-            ]
-            add_more_tasks = @prompt.select("Add another one?", menu)
+            add_more_tasks = @prompt.select("Add another one?", @yes_or_no)
         end
     end
 
