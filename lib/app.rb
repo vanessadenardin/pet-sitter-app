@@ -9,7 +9,6 @@ require 'emojis'
 require 'artii'
 require 'colorize'
 require 'date'
-require 'tty-table'
 
 class App
     def initialize(database_file)
@@ -41,17 +40,24 @@ class App
     end
 
     def login()
-        print Encryption.encrypt("1")
-
         error = ""
         loop do
             headline("Welcome")
             puts error.colorize(:red)
-            username = @prompt.ask("Username: ").downcase
-            password = @prompt.mask("Password: ")
+
+            username = @prompt.ask("Username: ") do |q|
+                q.required true
+                q.messages[:required?] = "Username is required."
+            end
+
+            password = @prompt.mask("Password: ") do |q|
+                q.required true
+                q.messages[:required?] = "Password is required."
+            end
+            
             pet_sitters = @db.get_data("pet_sitters")
             for pet_sitter in pet_sitters
-                if pet_sitter["username"] == username
+                if pet_sitter["username"] == username.downcase
                     if pet_sitter["password"] == password
                         main_menu()
                     else
@@ -104,13 +110,14 @@ class App
         pet_sitter = @db.get_by_id("pet_sitters", id)
 
         loop do
-            # system 'clear'
-            puts "Pet sitter details"
-            puts "Name: #{pet_sitter["name"]}"
-            puts "Contact: #{pet_sitter["contact"]}"
-            puts "Post Code: #{pet_sitter["post_code"]}"
-            puts "ABN: #{pet_sitter["abn"]}"
-            puts "-" * 20
+            system 'clear'
+            puts "--> Pet sitter details <--".colorize(:cyan)
+            puts @headline
+            puts @pipe + "Name: ".colorize(:cyan) + "#{pet_sitter["name"]}"
+            puts @pipe + "Contact: ".colorize(:cyan) + "#{pet_sitter["contact"]}"
+            puts @pipe + "Post Code: ".colorize(:cyan) + "#{pet_sitter["post_code"]}"
+            puts @pipe + "ABN: ".colorize(:cyan) + "#{pet_sitter["abn"]}"
+            puts @headline
             menu = []
             menu.push({name: 'Edit pet sitter', value: "EDIT"})
             menu = menu + @navigation
@@ -150,10 +157,8 @@ class App
         end
 
         if @prompt.select("Edit ABN? ", @yes_or_no)
-            pet_sitter["abn"] = @prompt.ask("ABN: ") do |q|
-                q.required true
-                q.messages[:required?] = "Required abn"
-                q.modify :capitalize
+            pet_sitter["abn"] = @prompt.ask("ABN: ", convert: :integer) do |q|
+                q.messages[:convert?] = "ABN has to be a number (no spaces)"
             end
         end
         
@@ -223,7 +228,7 @@ class App
             pet["age"] = @prompt.ask("Age: ", convert: :integer) do |q|
                 q.required true
                 q.messages[:required?] = "Required pet age"
-                q.messages[:valid?] = "Age has to be a number"
+                q.messages[:convert?] = "Age has to be a number"
             end
         end
 
@@ -253,7 +258,7 @@ class App
         age = @prompt.ask("Pet Age?", convert: :integer) do |q|
             q.required true
             q.messages[:required?] = "Required pet age"
-            q.messages[:valid?] = "Age has to be a number"
+            q.messages[:convert?] = "Age has to be a number"
         end
 
         type = @prompt.select("Pet type? ", [
@@ -333,7 +338,7 @@ class App
 
         if @prompt.select("Edit Post Code? ", @yes_or_no)
             client["post_code"] = @prompt.ask("Post code: ", convert: :integer) do |q|
-                q.messages[:valid?] = "Post code has to be a number"
+                q.messages[:convert?] = "Post code has to be a number"
             end
         end
         
@@ -365,7 +370,7 @@ class App
         end
 
         post_code = @prompt.ask("Post Code?", convert: :integer) do |q|
-            q.messages[:valid?] = "Post code has to be a number"
+            q.messages[:convert?] = "Post code has to be a number"
         end
 
         new_id = @db.get_new_id("clients")
