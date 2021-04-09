@@ -5,20 +5,28 @@ require_relative './pet'
 require_relative './task'
 require_relative './database'
 require 'tty-prompt'
+require 'emojis'
+require 'artii'
+require 'colorize'
 
 class App
     def initialize(database_file)
         @db = Database.new(database_file)
         @prompt = TTY::Prompt.new(active_color: :cyan)
         @last_menu = "main_menu"
+        @artii = Artii::Base.new
+        @headline = ("-" * 80).colorize(:magenta)
+        @emoji = Emojis.new
+        # print @emoji.list
+        # puts String.colors
     end
 
     def main_menu()
-        puts "My Petsitter App"
-        puts "Welcome!"
-        puts '-' * 20
-
-        # self.send("menu_clients")
+        puts @headline
+        puts @artii.asciify("My Petsitter App").colorize(:magenta)
+        puts @headline
+        puts "#{@emoji[:smiling_cat_face_with_open_mouth]} Welcome! #{@emoji[:dog_face]}"
+        puts @headline
         loop do
             # system 'clear'
             input = @prompt.select('Menu:') do |menu|
