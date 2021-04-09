@@ -58,6 +58,21 @@ class Database
         save()
     end
 
+    def edit_task(class_name, object)
+        @data = get_all()
+        # go through all items in the file
+        for item in @data[class_name]
+            # if match the ID of the edit object - replace existing one
+            if item["id"] == object["id"]
+                # update existing values (item) from the edited pet (object)
+                item["description"] = object["description"]
+                item["status"] = object["status"]
+                
+            end
+        end
+        save()
+    end
+    
     def edit_job(class_name, object)
         @data = get_all()
         # go through all items in the file
@@ -121,11 +136,11 @@ class Database
         return pet_list
     end
 
-    def get_task_list_by_client_id(job_id)
+    def get_task_list_by_job_id(job_id)
         list_tasks = []
         for task in get_data("tasks")
-            if job_id == job["id"]
-                list_tasks.push(job)
+            if job_id == task["job_id"]
+                list_tasks.push(task)
             end
         end
 

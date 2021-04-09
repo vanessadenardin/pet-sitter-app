@@ -2,6 +2,7 @@ require_relative './client'
 require_relative './pet_sitter'
 require_relative './job'
 require_relative './pet'
+require_relative './task'
 require_relative './database'
 require 'tty-prompt'
 
@@ -265,27 +266,32 @@ class App
     def menu_edit_task(task)
         loop do
             # system 'clear'
-            puts "Tasks lists"
+            puts "Tasks list:"
             puts "Description: #{task["description"]}"
-            puts "Status: #{task["status"]}"
+            puts "Status: #{task["status"] ? "Completed" : "Not completed"}"
             puts "-" * 20
 
             menu = [
-                {name: 'Delete task', value: "DELETE"},
-                {name: 'Edit task', value: "EDIT"}
+                {name: 'Edit task', value: "EDIT"},
+                # {name: 'Add task', value: "ADD"},
+                {name: 'Delete task', value: "DELETE"}
             ]
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
+            go_to(input)
             case input
-            when "BACK"
-                menu_edit_job(job["job_id"])
             when "EDIT"
                 task = task_edit(task)
-                menu_edit_task(task)
+                # menu_edit_task(task)
+            when "DELETE"
+                task_delete(task)
+                menu_edit_job(task["job_id"])
+            when "BACK"
+                menu_edit_job(task["job_id"])
             end
-            go_to(input)
-            task_delete(task)
-            menu_edit_job(job["job_id"])
+
+            # task_delete(task)
+            # menu_edit_job(job["job_id"])
         end
     end
 
@@ -297,12 +303,10 @@ class App
         if @prompt.select("Edit description? ", menu)
             task["description"] = @prompt.ask("Description: ")
         end
-        if @prompt.select("Edit Status? ", menu)
-            task["status"] = @prompt.ask("Status: ")
-        end
-        
+        task["status"] = @prompt.select("Completed? ", menu)
+
         @db.edit_task("tasks", task)
-        return pet
+        return task
     end
 
     def task_delete(task)
@@ -310,10 +314,9 @@ class App
     end
 
     def task_add(job_id)
-        description = @prompt.ask("Description:")
-        status = @prompt.ask("Status:")
+        description = @prompt.ask("Description: ")
 
-        task = Task.new(id, description, status, job_id)
+        task = Task.new(description, job_id)
         
         @db.add("tasks", task)
     end
@@ -330,11 +333,12 @@ class App
             puts "Job ID: #{job["id"]}"
             puts "Date: #{job["date"]}"
             puts "Client: #{job["client_id"]}"
-            puts "Job has #{job["list_tasks"].length} tasks registered."
+            tasks_not_completed = job["list_tasks"].select{|task| !task["status"]}.length
+            puts "Job has #{job["list_tasks"].length} tasks registered and #{tasks_not_completed > 0 ? "#{tasks_not_completed} tasks to be completed." : "all tasks completed."}"
             puts "-" * 20
             menu = []
             for task in job["list_tasks"]
-                menu.push({name: task, value: task})
+                menu.push({name: task["description"], value: task})
             end
             menu.push({name: 'Add task', value: "ADD"})
             menu.push({name: 'Edit job date', value: "EDIT"})
@@ -342,16 +346,22 @@ class App
             menu = navigation(menu)
             input = @prompt.select("Tasks list: ", menu)
             @last_menu = "menu_jobs"
+            go_to(input)
             case input
+            when "ADD"
+                task_add(job["id"])
             when "DELETE"
                 job_delete(job)
                 menu_jobs()
             when "EDIT"
                 job = job_edit(job)
                 menu_edit_job(id)
-
+            when "BACK"
+                menu_jobs()
+            else
+                menu_edit_task(task)
             end
-            go_to(input)
+
 
         end
     end 
