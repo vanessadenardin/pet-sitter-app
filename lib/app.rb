@@ -553,7 +553,7 @@ class App
             return false
         end
     end
-    
+
     def job_delete(job)
         for task in job["list_tasks"]
             @db.delete("tasks", task["id"])
@@ -563,9 +563,15 @@ class App
     end
 
     def job_add()
-        date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
-            q.required true        
-            q.messages[:required?] = "Required date (dd/mm/yyyy)"
+        valid_date = false
+        while (valid_date)
+            date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
+                q.required true        
+                q.messages[:required?] = "Required date (dd/mm/yyyy)"
+            end
+            # sends date input to date validation
+            # keep on this loop until date is valid
+            valid_date = validate_date(date)
         end
 
         menu = []
