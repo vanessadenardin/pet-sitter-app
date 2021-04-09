@@ -564,7 +564,7 @@ class App
 
     def job_add()
         valid_date = false
-        while (valid_date)
+        while (!valid_date)
             date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
                 q.required true        
                 q.messages[:required?] = "Required date (dd/mm/yyyy)"
@@ -593,7 +593,9 @@ class App
     end
 
     def menu_jobs()
+        # jobs is outside the loop so we can have either 7 days only or all jobs
         jobs = @db.get_jobs_last_7_days()
+        # variable to control changing display messages
         next_7_days = true
         loop do
             headline("Jobs")
@@ -619,6 +621,9 @@ class App
             case input
             when "ADD"
                 job_add()
+                # refresh jobs from last 7 days after adding one so it can update the menu
+                # reason is because the get jobs is outside the loop
+                jobs = @db.get_jobs_last_7_days()
             when "ALL"
                 jobs = @db.get_data("jobs")
                 next_7_days = false
