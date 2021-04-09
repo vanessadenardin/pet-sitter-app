@@ -24,6 +24,24 @@ class Database
         save()
     end
 
+    # def edit_pet_sitter(class_name, object)
+    #     @data = get_all()
+    #     # go through all items in the file
+    #     for item in @data[class_name]
+    #         # if match the ID of the edit object - replace existing one
+    #         if item["id"] == object["id"]
+    #             # update existing values (item) from the edited pet (object)
+    #             item["name"] = object["name"]
+    #             item["contact"] = object["contact"]
+    #             item["post_code"] = object["post_code"]
+    #             item["abn"] = object["abn"]
+    #             # item = object
+                
+    #         end
+    #     end
+    #     save()
+    # end
+
     def edit_pet(class_name, object)
         @data = get_all()
         # go through all items in the file

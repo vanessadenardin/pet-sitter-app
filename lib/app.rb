@@ -73,14 +73,87 @@ class App
             puts "Post Code: #{pet_sitter["post_code"]}"
             puts "ABN: #{pet_sitter["abn"]}"
             puts "-" * 20
-            menu = []
+            menu = [
+                # {name: 'Add pet sitter', value: "ADD"},
+                # {name: 'Edit pet sitter', value: "EDIT"}
+            ]
             menu = navigation(menu)
             input = @prompt.select("Menu: ", menu)
             @last_menu = "menu_pet_sitter"
             go_to(input)
-            menu_edit_pet_sitter(input)
+            # case input
+            # when "ADD"
+            #     pet_sitter_add()
+            # when "EDIT"
+            #     pet_sitter = pet_sitter_edit(pet_sitter)
+            #     menu_edit_pet_sitter(id)
+            # end
         end
     end
+
+
+    # def edit_pet_sitter(pet_sitter)
+    #     menu = [
+    #         {name: "Yes", value: true},
+    #         {name: "No", value: false}
+    #     ]
+    #     if @prompt.select("Email:", menu) do |q|
+    #         pet_sitter["contact"] = @prompt.ask("Edit Email: ")do |q|
+    #         q.required true
+    #         q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+    #         end
+    #     end
+    #     if @prompt.select("Post Code? ", menu)
+    #         post_code = @prompt.ask("Post Code?", convert: :integer)
+    #     end
+    #     if @prompt.select("Edit Observations? ", menu)
+    #         pet_sitter["abn"] = @prompt.ask("ABN: ")
+    #     end
+        
+    #     @db.edit_pet_sitter("pet_sitters", pet_sitter)
+    #     return pet_sitter
+    # end
+
+    # def add_pet_sitter()
+    #     name = @prompt.ask("Name?") do |q|
+    #     q.required true
+    #     q.modify :capitalize
+    #     end
+    #     contact = @prompt.ask("Email:") do |q|
+    #         q.required true
+    #         q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+    #     end
+    #     post_code = @prompt.ask("Post Code?", convert: :integer)do |q|
+    #     q.required true
+    #     end
+    #     abn = @prompt.ask("ABN: ")
+        
+    #     pet_sitter = Pet_sitter.new(name, contact, post_code,abn)
+        
+    #     @db.add("pet_sitters", pet_sitter)
+    # end
+
+    # def pet_sitter_edit(pet)
+    #     menu = [
+    #         {name: "Yes", value: true},
+    #         {name: "No", value: false}
+    #     ]
+    #         if @prompt.select("Email:", menu) do |q|
+    #             pet_sitter["contact"] = @prompt.ask("Edit Email: ")do |q|
+    #             q.required true
+    #             q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+    #         end
+    #     end
+    #     if @prompt.select("Post Code? ", menu)
+    #         post_code = @prompt.ask("Post Code?", convert: :integer)
+    #     end
+    #     if @prompt.select("Edit Observations? ", menu)
+    #         pet_sitter["abn"] = @prompt.ask("ABN: ")
+    #     end
+                
+    #     @db.edit_pet_sitter("pet_sitters", pet_sitter)
+    #     return pet_sitter
+    # end
 
     def menu_pet_sitter()
         loop do
@@ -134,13 +207,20 @@ class App
             {name: "No", value: false}
         ]
         if @prompt.select("Edit name? ", menu)
-            pet["name"] = @prompt.ask("Name: ")
+            pet["name"] = @prompt.ask("Name: ")do |q|
+            q.required true
+            q.modify :capitalize
+            end
         end
         if @prompt.select("Edit Age? ", menu)
-            pet["age"] = @prompt.ask("Age: ")
+            pet["age"] = @prompt.ask("Age: ", convert: :integer) do |q|
+                q.required true
+                end
         end
         if @prompt.select("Edit Observations? ", menu)
-            pet["observations"] = @prompt.ask("Observations: ")
+            pet["observations"] = @prompt.ask("Observations: ") do |q|
+                q.modify :capitalize
+                end
         end
         
         @db.edit_pet("pets", pet)
@@ -152,10 +232,23 @@ class App
     end
 
     def pet_add(client_id)
-        name = @prompt.ask("Name?")
-        age = @prompt.ask("Age?")
-        type = @prompt.ask("Type?")
-        observations = @prompt.ask("Observations: ")
+        name = @prompt.ask("Name?") do |q|
+        q.required true
+        q.modify :capitalize
+        end
+
+        age = @prompt.ask("Age?", convert: :integer) do |q|
+        q.required true
+        end
+
+        type = @prompt.ask("Type?")do |q|
+        q.required true
+        q.modify :capitalize
+        end
+
+        observations = @prompt.ask("Observations: ") do |q|
+        q.modify :capitalize
+        end
         
         pet = Pet.new(name, age, type, observations, client_id)
         
@@ -207,13 +300,21 @@ class App
             {name: "No", value: false}
         ]
         if @prompt.select("Edit name? ", menu)
-            client["name"] = @prompt.ask("Name: ")
+            client["name"] = @prompt.ask("Name: ") do |q|
+            q.required true
+            q.modify :capitalize
+            end
         end
-        if @prompt.select("Edit Contact? ", menu)
-            client["contact"] = @prompt.ask("Contact: ")
+
+        if @prompt.select("Edit Email? ", menu)
+            client["contact"] = @prompt.ask("Email: ") do |q|
+            q.required true
+            q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+            end
         end
+
         if @prompt.select("Edit Post Code? ", menu)
-            client["post_code"] = @prompt.ask("Post code: ")
+            client["post_code"] = @prompt.ask("Post code: ", convert: :integer)
         end
         
         @db.edit_client("clients", client)
@@ -228,9 +329,17 @@ class App
     end
 
     def client_add()
-        name = @prompt.ask("Name?")
-        contact = @prompt.ask("Contact?")
-        post_code = @prompt.ask("Post Code?")
+        name = @prompt.ask("Name?") do |q|
+        q.required true
+        q.modify :capitalize
+        end
+
+        contact = @prompt.ask("Email:") do |q|
+            q.required true
+            q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
+        end
+
+        post_code = @prompt.ask("Post Code?", convert: :integer)
         
         client = Client.new(name, contact, post_code)
         
@@ -273,7 +382,6 @@ class App
 
             menu = [
                 {name: 'Edit task', value: "EDIT"},
-                # {name: 'Add task', value: "ADD"},
                 {name: 'Delete task', value: "DELETE"}
             ]
             menu = navigation(menu)
@@ -282,7 +390,6 @@ class App
             case input
             when "EDIT"
                 task = task_edit(task)
-                # menu_edit_task(task)
             when "DELETE"
                 task_delete(task)
                 menu_edit_job(task["job_id"])
@@ -290,8 +397,6 @@ class App
                 menu_edit_job(task["job_id"])
             end
 
-            # task_delete(task)
-            # menu_edit_job(job["job_id"])
         end
     end
 
@@ -301,7 +406,10 @@ class App
             {name: "No", value: false}
         ]
         if @prompt.select("Edit description? ", menu)
-            task["description"] = @prompt.ask("Description: ")
+            task["description"] = @prompt.ask("Description: ")do |q|
+            q.required true
+            q.modify :capitalize
+            end
         end
         task["status"] = @prompt.select("Completed? ", menu)
 
@@ -314,7 +422,10 @@ class App
     end
 
     def task_add(job_id)
-        description = @prompt.ask("Description: ")
+        description = @prompt.ask("Description: ")do |q|
+        q.required true
+        q.modify :capitalize
+        end
 
         task = Task.new(description, job_id)
         
@@ -394,7 +505,11 @@ class App
 
         add_more_tasks = true
         while(add_more_tasks)
-            list_tasks.push(@prompt.ask("Add a task: "))
+            # list_tasks.push(@prompt.ask("Add a task: "))do |q|
+            task_add.push(@prompt.ask("Add a task: ")) do |q|
+            q.required true
+            q.modify :capitalize
+            end
             menu = [
                 {name: "Yes", value: true},
                 {name: "No", value: false}

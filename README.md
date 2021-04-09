@@ -100,7 +100,7 @@ In this first phase, the password is not encrypted, which can be considered an e
 
 - Home Menu
 
-The home menu is displayed as soon as the login is succefully. The initial menu will allow the user to access personal information, customer and pet data, as well as information about service lists containing date, customer address, type of animal, special requests.
+The Home menu is displayed as soon as the login is succefully. The initial menu will allow the user to access personal information, customer and pet data, as well as information about service lists containing date, customer address, type of animal, special requests.
 
 - Pet Sitter profile
 
@@ -113,13 +113,16 @@ On this page the user can also access pet data, adding, changing and deleting in
 
 - Pet's information
 
+The Pet's page allows the user (pet sitter) to track all existing pets linked for the clients registered, as well as add, edit and delete pets.
 
 - Job orders
 
 A list of the next 7 days will appear on the job page, but it also allows the user to view previous and future records, add a new one, edit and delete any job.
-This page contains data about the babysitter, clients and pets, as well as a list of tasks required for each service added.
+This page contains data about the pet sitter, clients and pets, as well as a list of tasks required for each service added.
 
 - Tasks' list
+
+A list of tasks required to complete the job and the task page will appear, allowing the user to view the status of the task list and how many tasks need to be completed, add a new one, edit and delete any task.
 
 - Back option
 
@@ -152,6 +155,8 @@ Extras:
 - `job.rb` contains the Job class. The Job class represents all the service provided by the pet sitter to a specific client, containing a list of tasks for each job, as well as the date of completion of the tasks and the client who requested it.
 
 - `pet.rb` contains the class Pet. It represents the pets of each client and contains information about the animal, such as name, age, type (whether cat or dog) and observations related to special needs for the pet's well-being.
+
+- `task.rb` contains the Task class. It represents the tasks of each job and contains information about the service that will be provided, such as description and status.
 
 - `database.rb` is a file containing some methods directly related to the save function in the `database.json` file, such as adding, editing, deleting and obtaining elements in classes.
 
