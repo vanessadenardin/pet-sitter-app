@@ -209,7 +209,6 @@ class App
             go_to(input)
             pet_delete(pet)
             menu_edit_client(pet["client_id"])
-            # menu_edit_client(pet["client_id"])
         end
     end
 
@@ -473,12 +472,13 @@ class App
         loop do
             job = @db.get_by_id("jobs", id)
             job["list_tasks"] = @db.get_task_list_by_job_id(job["id"])
+            job["client"] = @db.get_by_id("clients", job["client_id"])
 
             puts "--> Job details <--".colorize(:cyan)
             puts @headline
             puts @pipe + "Job ID: ".colorize(:cyan) + "#{job["id"]}"
             puts @pipe + "Date: ".colorize(:cyan) + "#{job["date"]}"
-            puts @pipe + "Client: ".colorize(:cyan) + "#{job["client_id"]}"
+            puts @pipe + "Client: ".colorize(:cyan) + "#{job["client"]["name"]}"
             puts @headline
 
             tasks_not_completed = job["list_tasks"].select{|task| !task["status"]}.length
@@ -516,16 +516,44 @@ class App
     
     def job_edit(job)
         if @prompt.select("Edit date? ", @yes_or_no)
-            job["date"] = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
-                q.required true
-                q.messages[:required?] = "Required date (dd/mm/yyyy)"
+            valid_date = false
+            while(!valid_date)
+                job["date"] = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
+                    q.required true
+                    q.messages[:required?] = "Required date (dd/mm/yyyy)"
+                end
+                # sends date input to date validation
+                # keep on this loop until date is valid
+                valid_date = validate_date(job["date"])
             end
+
         end
         
         @db.edit("jobs", job)
         return job
     end
 
+    def validate_date(date)
+        begin
+            # first convert the input string into the Date gem
+            # that will validate most of the cases like m/d/y or other separators
+            new_date = Date.strptime(date, "%d/%m/%Y")
+            # extract the year from the date, convert to string and split to check Year size
+            # The calculation of 7 days logic requires the year to be full size i.e 2021
+            # so if length different than 4, raises an argument for invalid date
+            if new_date.year.to_s.split("").length != 4
+                raise ArgumentError
+            end
+
+            # return true if no errors on validations
+            return true
+
+        rescue ArgumentError
+            puts "Invalid date"
+            return false
+        end
+    end
+    
     def job_delete(job)
         for task in job["list_tasks"]
             @db.delete("tasks", task["id"])
