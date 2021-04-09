@@ -72,7 +72,7 @@ class Database
         end
         save()
     end
-    
+
     def delete(class_name, id)
         @data = get_all()
         for item in @data[class_name]
@@ -119,6 +119,17 @@ class Database
         end
 
         return pet_list
+    end
+
+    def get_task_list_by_client_id(job_id)
+        list_tasks = []
+        for task in get_data("tasks")
+            if job_id == job["id"]
+                list_tasks.push(job)
+            end
+        end
+
+        return list_tasks
     end
 
     def get_jobs_last_7_days()

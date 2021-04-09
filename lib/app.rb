@@ -262,6 +262,62 @@ class App
         end
     end
 
+    def menu_edit_task(task)
+        loop do
+            # system 'clear'
+            puts "Tasks lists"
+            puts "Description: #{task["description"]}"
+            puts "Status: #{task["status"]}"
+            puts "-" * 20
+
+            menu = [
+                {name: 'Delete task', value: "DELETE"},
+                {name: 'Edit task', value: "EDIT"}
+            ]
+            menu = navigation(menu)
+            input = @prompt.select("Menu: ", menu)
+            case input
+            when "BACK"
+                menu_edit_job(job["job_id"])
+            when "EDIT"
+                task = task_edit(task)
+                menu_edit_task(task)
+            end
+            go_to(input)
+            task_delete(task)
+            menu_edit_job(job["job_id"])
+        end
+    end
+
+    def task_edit(task)
+        menu = [
+            {name: "Yes", value: true},
+            {name: "No", value: false}
+        ]
+        if @prompt.select("Edit description? ", menu)
+            task["description"] = @prompt.ask("Description: ")
+        end
+        if @prompt.select("Edit Status? ", menu)
+            task["status"] = @prompt.ask("Status: ")
+        end
+        
+        @db.edit_task("tasks", task)
+        return pet
+    end
+
+    def task_delete(task)
+        @db.delete("tasks", task["id"])
+    end
+
+    def task_add(job_id)
+        description = @prompt.ask("Description:")
+        status = @prompt.ask("Status:")
+
+        task = Task.new(id, description, status, job_id)
+        
+        @db.add("tasks", task)
+    end
+
     def menu_edit_job(id)
         # print "oi #{id}"
         job = @db.get_by_id("jobs", id)
@@ -269,10 +325,12 @@ class App
         # job["job_list"] = @db.get_pet_list_by_client_id(job["id"])
         loop do
             # system 'clear'
+            job["list_tasks"] = @db.get_task_list_by_job_id(job["id"])
             puts "Job details:"
             puts "Job ID: #{job["id"]}"
             puts "Date: #{job["date"]}"
-            puts "Client: #{job["client_id"]}" #client name???
+            puts "Client: #{job["client_id"]}"
+            puts "Job has #{job["list_tasks"].length} tasks registered."
             puts "-" * 20
             menu = []
             for task in job["list_tasks"]
@@ -294,7 +352,6 @@ class App
 
             end
             go_to(input)
-            
 
         end
     end 

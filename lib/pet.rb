@@ -25,9 +25,5 @@ class Pet
             client_id: @client_id
         }
     end
-    # def add_pet(id, name, age, type, observations)
-    #     pet = Pet.new(id, name, age, type, observations)
-    #     @pet_list << pet
-    # end
 
 end
