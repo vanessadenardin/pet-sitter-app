@@ -101,6 +101,8 @@ class App
         if @prompt.select("Edit name? ", menu)
             pet_sitter["name"] = @prompt.ask("Name: ") do |q|
                 q.required true
+                q.validate /[a-z]+/
+                q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required name"
                 q.modify :capitalize
             end
@@ -188,6 +190,8 @@ class App
         if @prompt.select("Edit pet name? ", menu)
             pet["name"] = @prompt.ask("Name: ")do |q|
                 q.required true
+                q.validate /[a-z]+/
+                q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required pet name"
                 q.modify :capitalize
             end
@@ -218,6 +222,8 @@ class App
     def pet_add(client_id)
         name = @prompt.ask("Pet Name?") do |q|
             q.required true
+            q.validate /[a-z]+/
+            q.messages[:valid?] = "Name need to start with a letter."
             q.messages[:required?] = "Required pet name"
             q.modify :capitalize
         end
@@ -294,7 +300,8 @@ class App
         if @prompt.select("Edit client name? ", menu)
             client["name"] = @prompt.ask("Name: ") do |q|
                 q.required true
-                # q.validate(/\A\w+\Z/)
+                q.validate /[a-z]+/
+                q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required client name"
                 q.modify :capitalize
             end
@@ -330,8 +337,8 @@ class App
         name = @prompt.ask("Client Name?") do |q|
             q.required true
             q.validate /[a-z]+/
-            q.messages[:required?] = "Required client name"
             q.messages[:valid?] = "Name need to start with a letter."
+            q.messages[:required?] = "Required client name"
             q.modify :capitalize
         end
 
