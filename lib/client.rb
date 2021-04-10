@@ -6,6 +6,7 @@ class Client < User
         @pet_list = []
     end
 
+    # convert class to hash
     def to_hash()
         return {
             id: @id,

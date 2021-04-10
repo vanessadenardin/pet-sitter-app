@@ -9,10 +9,12 @@ class Database
         @data = {}
     end
 
+    # convert hash into json and save to file
     def save()
         File.write(@database_file, @data.to_json)
     end
     
+    # add info in the json file
     def add(class_name, object)
         @data = get_all()
         
@@ -21,23 +23,7 @@ class Database
         save()
     end
 
-    # def edit_pet_sitter(class_name, object)
-    #     @data = get_all()
-    #     # go through all items in the file
-    #     for item in @data[class_name]
-    #         # if match the ID of the edit object - replace existing one
-    #         if item["id"] == object["id"]
-    #             # update existing values (item) from the edited pet (object)
-    #             item["name"] = object["name"]
-    #             item["contact"] = object["contact"]
-    #             item["post_code"] = object["post_code"]
-    #             item["abn"] = object["abn"]
-    #             # item = object
-                
-    #         end
-    #     end
-    #     save()
-    # end
+    # edit item in the json file and save
     def edit(class_name, object)
         @data = get_all()
         # go through all items in the file
@@ -51,70 +37,7 @@ class Database
         save()
     end
 
-    # def edit_pet(class_name, object)
-    #     @data = get_all()
-    #     # go through all items in the file
-    #     for item in @data[class_name]
-    #         # if match the ID of the edit object - replace existing one
-    #         if item["id"] == object["id"]
-    #             # update existing values (item) from the edited pet (object)
-    #             item["name"] = object["name"]
-    #             item["age"] = object["age"]
-    #             item["observations"] = object["observations"]
-    #             # item = object
-                
-    #         end
-    #     end
-    #     save()
-    # end
-
-    # def edit_client(class_name, object)
-    #     @data = get_all()
-    #     # go through all items in the file
-    #     for item in @data[class_name]
-    #         # if match the ID of the edit object - replace existing one
-    #         if item["id"] == object["id"]
-    #             # update existing values (item) from the edited pet (object)
-    #             item["name"] = object["name"]
-    #             item["contact"] = object["contact"]
-    #             item["post_code"] = object["post_code"]
-    #             # item = object
-                
-    #         end
-    #     end
-    #     save()
-    # end
-
-    # def edit_task(class_name, object)
-    #     @data = get_all()
-    #     # go through all items in the file
-    #     for item in @data[class_name]
-    #         # if match the ID of the edit object - replace existing one
-    #         if item["id"] == object["id"]
-    #             # update existing values (item) from the edited pet (object)
-    #             item["description"] = object["description"]
-    #             item["status"] = object["status"]
-                
-    #         end
-    #     end
-    #     save()
-    # end
-    
-    # def edit_job(class_name, object)
-    #     @data = get_all()
-    #     # go through all items in the file
-    #     for item in @data[class_name]
-    #         # if match the ID of the edit object - replace existing one
-    #         if item["id"] == object["id"]
-    #             # update existing values (item) from the edited pet (object)
-    #             item["date"] = object["date"]
-    #             # item = object
-                
-    #         end
-    #     end
-    #     save()
-    # end
-
+    # delete item in the json file and save
     def delete(class_name, id)
         @data = get_all()
         for item in @data[class_name]
@@ -125,6 +48,7 @@ class Database
         save()
     end
 
+    # get item from json file and return it
     def get_by_id(class_name, id)
         @data = get_all()
         for item in @data[class_name]
@@ -134,24 +58,29 @@ class Database
         end
     end
 
+    # get from json file class data
     def get_data(class_name)
         return JSON.parse(File.read(@database_file))[class_name]
         
+        # error handling
         rescue Errno::ENOENT
             File.open(@database_file, 'w+')
             File.write(@database_file, [])
             retry
     end
 
+    # get from json file all data
     def get_all()
         return JSON.parse(File.read(@database_file))
         
+        # error handling
         rescue Errno::ENOENT
             File.open(@database_file, 'w+')
             File.write(@database_file, [])
             retry
     end
 
+    # get pets client from json using client id and returning it
     def get_pet_list_by_client_id(client_id)
         pet_list = []
         for pet in get_data("pets")
@@ -163,6 +92,7 @@ class Database
         return pet_list
     end
 
+    # get tasks list of the jobs from json using job id and returning it
     def get_task_list_by_job_id(job_id)
         list_tasks = []
         for task in get_data("tasks")
@@ -174,6 +104,8 @@ class Database
         return list_tasks
     end
 
+    # get jobs from json using difference of job date and local date now
+    # returning jobs for next 7 days
     def get_jobs_last_7_days()
         @data = get_all()
         now = Time.now.to_date

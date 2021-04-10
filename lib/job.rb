@@ -7,6 +7,7 @@ class Job
         @client_id = client_id
     end
 
+    # convert class to hash
     def to_hash()
         return {
             id: @id,

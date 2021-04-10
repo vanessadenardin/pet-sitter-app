@@ -1,6 +1,4 @@
 class Pet
-    # attr_accessor :id
-    #  :name, :type
 
     def initialize(id, name, age, type, observations, client_id)
         @id = id
@@ -11,6 +9,7 @@ class Pet
         @client_id = client_id
     end
 
+    # convert class to hash
     def to_hash()
         return {
             id: @id,

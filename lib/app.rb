@@ -16,13 +16,16 @@ class App
         @prompt = TTY::Prompt.new(active_color: :cyan)
         @last_menu = "main_menu"
         @artii = Artii::Base.new
+        # headline style (line and colour)
         @headline = ("-" * 80).colorize(:magenta)
         @pipe = "| ".colorize(:magenta)
         @emoji = Emojis.new
+        #variable to declare menu options
         @yes_or_no = [
             {name: "Yes", value: true},
             {name: "No", value: false}
         ]
+        #variable to declare menu options
         @navigation = [
             {name: 'Back', value: "BACK"},
             {name: 'Home', value: "HOME"},
@@ -32,6 +35,7 @@ class App
         # puts String.colors
     end
 
+    # headline style for menu options
     def headline(menu)
         system 'clear'
         puts @headline
@@ -39,6 +43,7 @@ class App
         puts @headline
     end
 
+    # welcome login screen (username and password required)
     def login()
         error = ""
         loop do
@@ -55,6 +60,7 @@ class App
                 q.messages[:required?] = "Password is required."
             end
             
+            # Error handling to acess app
             pet_sitters = @db.get_data("pet_sitters")
             for pet_sitter in pet_sitters
                 if pet_sitter["username"] == username.downcase
@@ -70,7 +76,10 @@ class App
         end
     end
 
+    # Main screen with all menu options added
+    # Choosing option through keyboard arrow key
     def main_menu()
+        system 'clear'
         loop do
             headline("My Petsitter App")
             puts "#{@emoji[:smiling_cat_face_with_open_mouth]} Welcome! #{@emoji[:dog_face]}".colorize(:bold)
@@ -106,6 +115,7 @@ class App
         end
     end
 
+    # pet sitter screen (first stage only one pet sitter is allowed)
     def menu_edit_pet_sitter(id)
         pet_sitter = @db.get_by_id("pet_sitters", id)
 
@@ -124,6 +134,8 @@ class App
             input = @prompt.select("Menu: ", menu)
             @last_menu = "menu_pet_sitter"
             go_to(input)
+
+            # edit option in the menu
             case input
             when "EDIT"
                 pet_sitter = pet_sitter_edit(pet_sitter)
@@ -131,11 +143,13 @@ class App
         end
     end
 
+    # menu option to edit pet sitter details
     def pet_sitter_edit(pet_sitter)
         if @prompt.select("Edit name? ", @yes_or_no)
             pet_sitter["name"] = @prompt.ask("Name: ") do |q|
                 q.required true
                 q.validate /[a-z]+/
+                # error handling message
                 q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required name"
                 q.modify :capitalize
@@ -146,6 +160,7 @@ class App
             pet_sitter["contact"] = @prompt.ask("Email: ") do |q|
                 q.required true
                 q.messages[:required?] = "Required email address"
+                # error handling message
                 q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
             end
         end
@@ -166,8 +181,10 @@ class App
         return pet_sitter
     end
 
+    # pet sitter list (first phase only one is allowed)
     def menu_pet_sitter()
         loop do
+            system 'clear'
             headline("Pet Sitters")
             pet_sitter = @db.get_data("pet_sitters")
             menu = []
@@ -182,6 +199,7 @@ class App
         end
     end
 
+    # pet details screen - pets info can be edit
     def menu_edit_pet(pet)
         loop do
             system 'clear'
@@ -199,6 +217,7 @@ class App
             menu = menu + @navigation
             input = @prompt.select("Menu: ", menu)
 
+            # specific menu options added 
             case input
             when "BACK"
                 menu_edit_client(pet["client_id"])
@@ -212,11 +231,13 @@ class App
         end
     end
 
+    # menu option to modify pet details
     def pet_edit(pet)
         if @prompt.select("Edit pet name? ", @yes_or_no)
             pet["name"] = @prompt.ask("Name: ")do |q|
                 q.required true
                 q.validate /[a-z]+/
+                # error handling message
                 q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required pet name"
                 q.modify :capitalize
@@ -226,6 +247,7 @@ class App
         if @prompt.select("Edit pet age? ", @yes_or_no)
             pet["age"] = @prompt.ask("Age: ", convert: :integer) do |q|
                 q.required true
+                # error handling message
                 q.messages[:required?] = "Required pet age"
                 q.messages[:convert?] = "Age has to be a number"
             end
@@ -241,14 +263,17 @@ class App
         return pet
     end
 
+    # menu option to delete pet
     def pet_delete(pet)
         @db.delete("pets", pet["id"])
     end
 
+    # menu option to add pet
     def pet_add(client_id)
         name = @prompt.ask("Pet Name?") do |q|
             q.required true
             q.validate /[a-z]+/
+            # error handling message
             q.messages[:valid?] = "Name need to start with a letter."
             q.messages[:required?] = "Required pet name"
             q.modify :capitalize
@@ -256,10 +281,12 @@ class App
 
         age = @prompt.ask("Pet Age?", convert: :integer) do |q|
             q.required true
+            #  error handling message
             q.messages[:required?] = "Required pet age"
             q.messages[:convert?] = "Age has to be a number"
         end
 
+        # option to choose between cat and dog (animal type)
         type = @prompt.select("Pet type? ", [
             {name: "#{@emoji[:smiling_cat_face_with_open_mouth]} Cat", value: "Cat"},
             {name: "#{@emoji[:dog_face]} Dog", value: "Dog"},
@@ -275,6 +302,7 @@ class App
         @db.add("pets", pet)
     end
 
+    # client edit screen options
     def menu_edit_client(id)
         client = @db.get_by_id("clients", id)
         
@@ -289,6 +317,7 @@ class App
             puts @headline
             puts @pipe + "Client has #{client["pet_list"].length.to_s.colorize(:cyan)} pets registered."
             puts @headline
+            # list of pets by client will appear
             menu = []
             for pet in client["pet_list"]
                 menu.push({name: pet["name"], value: pet})
@@ -301,6 +330,7 @@ class App
             @last_menu = "menu_clients"
             go_to(input)
 
+            # specific menu options added 
             case input
             when "ADD"
                 pet_add(client["id"])
@@ -316,11 +346,13 @@ class App
         end
     end 
     
+    # edit client option
     def client_edit(client)
         if @prompt.select("Edit client name? ", @yes_or_no)
             client["name"] = @prompt.ask("Name: ") do |q|
                 q.required true
                 q.validate /[a-z]+/
+                # error handling message
                 q.messages[:valid?] = "Name need to start with a letter."
                 q.messages[:required?] = "Required client name"
                 q.modify :capitalize
@@ -330,6 +362,7 @@ class App
         if @prompt.select("Edit Email? ", @yes_or_no)
             client["contact"] = @prompt.ask("Email: ") do |q|
                 q.required true
+                # error handling message
                 q.messages[:required?] = "Required client email address"
                 q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
             end
@@ -337,6 +370,7 @@ class App
 
         if @prompt.select("Edit Post Code? ", @yes_or_no)
             client["post_code"] = @prompt.ask("Post code: ", convert: :integer) do |q|
+                # error handling message
                 q.messages[:convert?] = "Post code has to be a number"
             end
         end
@@ -345,6 +379,7 @@ class App
         return client
     end
 
+    # delete client option
     def client_delete(client)
         for pet in client["pet_list"]
             @db.delete("pets", pet["id"])
@@ -353,10 +388,12 @@ class App
         @db.delete("clients", client["id"])
     end
 
+    # add new client
     def client_add()
         name = @prompt.ask("Client Name?") do |q|
             q.required true
             q.validate /[a-z]+/
+            # error handling message
             q.messages[:valid?] = "Name need to start with a letter."
             q.messages[:required?] = "Required client name"
             q.modify :capitalize
@@ -364,6 +401,7 @@ class App
 
         contact = @prompt.ask("Email:") do |q|
             q.required true
+            # error handling message
             q.messages[:required?] = "Required email address"
             q.validate(/\A\w+@\w+\.\w+\Z/, "Invalid email address")
         end
@@ -378,6 +416,7 @@ class App
         @db.add("clients", client)
     end
 
+    # client screen
     def menu_clients()
         loop do
             system 'clear'
@@ -387,6 +426,7 @@ class App
             puts "You have #{clients.length.to_s.colorize(:cyan)} clients registered."
             puts @headline
 
+            # list of clients will appear 
             menu = []
             for client in clients
                 menu.push({name: "#{client["name"]}", value: client["id"]})
@@ -397,6 +437,7 @@ class App
             @last_menu = "main_menu"
             go_to(input)
 
+            # specific menu options added 
             case input
             when "ADD"
                 client_add()
@@ -407,6 +448,7 @@ class App
         end
     end
 
+    #  edit tasks in the job order
     def menu_edit_task(task)
         loop do
             system 'clear'
@@ -424,6 +466,7 @@ class App
             input = @prompt.select("Menu: ", menu)
             go_to(input)
 
+            # specific menu options added 
             case input
             when "EDIT"
                 task = task_edit(task)
@@ -433,14 +476,15 @@ class App
             when "BACK"
                 menu_edit_job(task["job_id"])
             end
-
         end
     end
 
+    # edit task option
     def task_edit(task)
         if @prompt.select("Edit description? ", @yes_or_no)
             task["description"] = @prompt.ask("Description: ")do |q|
             q.required true
+            # error handling message
             q.messages[:required?] = "Required  tasks description"
             q.modify :capitalize
             end
@@ -452,13 +496,16 @@ class App
         return task
     end
 
+    # delete task option
     def task_delete(task)
         @db.delete("tasks", task["id"])
     end
 
+    # add task option
     def task_add(job_id)
         description = @prompt.ask("Description: ")do |q|
-            q.required true        
+            q.required true   
+            # error handling message
             q.messages[:required?] = "Required tasks description"
             q.modify :capitalize
         end
@@ -469,6 +516,7 @@ class App
         @db.add("tasks", task)
     end
 
+    # menu edit jobs
     def menu_edit_job(id)
         loop do
             system 'clear'
@@ -483,6 +531,7 @@ class App
             puts @pipe + "Client: ".colorize(:cyan) + "#{job["client"]["name"]}"
             puts @headline
 
+            # message highlighting tasks status
             tasks_not_completed = job["list_tasks"].select{|task| !task["status"]}.length
             puts "Job has #{job["list_tasks"].length.to_s.colorize(:cyan)} tasks registered and #{tasks_not_completed > 0 ? "#{tasks_not_completed.to_s.colorize(:red)} tasks to be completed." : "all tasks completed."}"
             puts @headline
@@ -499,6 +548,8 @@ class App
 
             @last_menu = "menu_jobs"
             go_to(input)
+
+            # specific menu options added 
             case input
             when "ADD"
                 task_add(job["id"])
@@ -516,12 +567,15 @@ class App
         end
     end 
     
+    # edit option for jobs
     def job_edit(job)
         if @prompt.select("Edit date? ", @yes_or_no)
             valid_date = false
             while(!valid_date)
+                # add date for job
                 job["date"] = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
                     q.required true
+                    # error handling message
                     q.messages[:required?] = "Required date (dd/mm/yyyy)"
                 end
                 # sends date input to date validation
@@ -535,6 +589,7 @@ class App
         return job
     end
 
+    # date validation
     def validate_date(date)
         begin
             # first convert the input string into the Date gem
@@ -556,6 +611,7 @@ class App
         end
     end
 
+    # delete job option
     def job_delete(job)
         for task in job["list_tasks"]
             @db.delete("tasks", task["id"])
@@ -564,11 +620,13 @@ class App
         @db.delete("jobs", job["id"])
     end
 
+    # add job option
     def job_add()
         valid_date = false
         while (!valid_date)
             date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
-                q.required true        
+                q.required true   
+                # error handling message
                 q.messages[:required?] = "Required date (dd/mm/yyyy)"
             end
             # sends date input to date validation
@@ -594,6 +652,7 @@ class App
         end
     end
 
+    # job screen
     def menu_jobs()
         # jobs is outside the loop so we can have either 7 days only or all jobs
         jobs = @db.get_jobs_last_7_days()
@@ -602,6 +661,7 @@ class App
         loop do
             system 'clear'
             headline("Jobs")
+            # message highlighting jobs in the list (next 7 days or all)
             puts "You have #{jobs.length.to_s.colorize(:cyan)} jobs" + "#{next_7_days ? " for the next 7 days." : "."}"
             puts @headline
 
@@ -621,6 +681,7 @@ class App
             @last_menu = "main_menu"
             go_to(input)
 
+            # specific menu options added 
             case input
             when "ADD"
                 job_add()
@@ -636,6 +697,7 @@ class App
         end
     end
 
+    # method to run app
     def run()
         login()
     end

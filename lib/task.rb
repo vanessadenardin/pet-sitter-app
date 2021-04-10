@@ -7,6 +7,7 @@ class Task
         @job_id = job_id
     end
 
+    # convert class to hash
     def to_hash()
         return {
             id: @id,
