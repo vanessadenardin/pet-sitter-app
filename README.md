@@ -19,6 +19,7 @@
     1. [Implementation plan](#Implementation-plan)
 
 1. [User Experience](#user-experience)
+    1. [Overview](#Overview)
     1. [User instructions](#User-instructions)
     1. [Requirements](#Requirements)
 
@@ -132,8 +133,6 @@ This page contains data about the pet sitter, clients and pets, as well a list o
 
 ![All jobs](/docs/list-all-jobs.png)
 
-
-
 - Tasks' list
 
 A list of tasks required to complete the job will appear in the _Task page_, allowing the user to view the status of the task list and how many tasks need to be completed, add a new one, edit and delete any task.
@@ -154,12 +153,12 @@ In the first phase, some resources could not be added due to the time limit. How
 
 - Add more than 1 pet sitter
 - Contact list
-<!-- - Mark completed tasks -->
 - Financial management
 - Availability calendar
 - Pet photo
 - Email notifications
 - Message chat
+- Add confirmation question before deletion
 
 ---
 ### 3. Code structure
@@ -178,7 +177,7 @@ In the first phase, some resources could not be added due to the time limit. How
 
 - `pet.rb` contains the class Pet. It represents the pets of each client and contains information about the animal, such as name, age, type (whether cat or dog) and observations related to special needs for the pet's well-being.
 
-- `task.rb` contains the Task class. It represents the tasks of each job and contains information about the service that will be provided, such as description and status.
+- `task.rb` contains the Task class. It represents the tasks of each job and contains information about the service that will be provided, such as description and status. Status can be changed to completed once the task is completed.
 
 - `database.rb` is a file containing some methods directly related to the save function in the `database.json` file, such as adding, editing, deleting and obtaining elements in classes.
 
@@ -188,10 +187,47 @@ In the first phase, some resources could not be added due to the time limit. How
 ## 3. User Experience
 ---
 
-### 1. User instructions
+### 1. Overview
+
+The user have access to 5 screens, including a welcome screen where username and password is required to access all data storage in the application. 
+The welcome screen ask for user and password to open the whole application.
+The Home screen has the main menu that includes Pet sitter, Client, Job and logout features using TTY-Prompt to navigation and make the selection choosing the option through arrow keys (↑/↓).
+Pet sitter screen allows, at this phase, only change data of the pet sitter. Beside that, Client and Job screens are accessible allowing additions, modifications and deltions of the information storage. In the Client screen the user can access client's list and pet's list for each client through a sub-menu that makes the client's name and pet's name as the options to choose. At this first version, the user will be only allow to add pets as cat or dog. In the Job screen the pet sitter can access the job's list via the sub-menu and into that can access the list of task to be completed.
+Errors are handled through the validation in the inputs avoiding invalid data entry, such as required inputs of string, date or integer type, as well email address valid. Also, to access the application, the user has to have a valid username and password to enter, if not a error will be raised and the  user will enter in a loop. Each error will show a message that will appear in the screen to tell what has happened from that the user will be able to fix it.
+
+<!-- Users can walk through a tutorial rundown of the application by using spotify_rec -t, with a number of screens explaining how each feature works and how it relates to the rest of the application. Each feature has its own sub-menu which is accessible through the main menu. The sub-menu includes a list of all available options, and utilises TTY-Prompt to make selecting and navigating through the options and menus hassle free. This all makes for a swift interation with the program, and any particular feature can be reached anywhere the program within 1-3 selections from the respective menus. Errors are handled in the program in a variety of ways, including conditional checks, rescuing errors and limiting input. Conditional checks reroute users in the program if the conditional is true, such as if the user has 5 items in MyList already, the program won't let them proceed to add another, and will kick them back to the menu. Raising errors and rescuing them is also used in areas of the program, such as not allowing a list to be displayed if it doesn't have any items in it and having the user choose a new username or password if it doesn't meet the requirements. Finally, TTY-Prompt's select capability is used to limit the range of user input that can be received, and eliminates any misspellings or unexpected options when navigating through the program. The user is only able to select from a defined list for things such as menus, and this doesn't allow any errors based on user input. Furthermore, TTY-Prompt offers a validate function, which validates whether a users selected amount of recommendations is within the range that is allowed to be generated. Each error is accompanied by a message that is printed to the screen to tell the user what has happened, and how they can take steps to fix it. -->
+### 2. User instructions
+
+1. Install Ruby (version indicated: ruby 2.7.2p137)
+1. Install Ruby Gem
+    - rspec
+    - tty-prompt
+    - emojis
+    - artii
+    - colorize
+    - date
+1. shell script
+1. comand line arguments
+<!-- Install ruby, we recommend using asdf to do this.
+Install the Ruby Gem. You can view the Ruby Gems page for this gem here. gem install spotify_rec
+This should download the following gem dependencies:
+RSpotify
+TTY-Prompt
+Terminal-Table
+Colorizer If for any reason these don't install, you can do so with the following:
+gem install rspotify
+gem install tty-prompt
+gem install terminal-table
+gem install colorizer
+You can run the app by typing spotify_rec from anywhere in your terminal.
+In addition to spotify_rec, the program takes the following options:
+-v or --version || Displays the program version
+-h or --help || Displays the help message
+-t, --tutorial || Have a brief walkthrough of the program
+-q (GENRE) or --quick (GENRE) || Generates a quick recommendation using the genre that is supplied -->
 
 ---
-### 2. Requirements
+### 3. Requirements
 
 ---
 ## Reference

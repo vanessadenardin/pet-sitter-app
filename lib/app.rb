@@ -51,11 +51,13 @@ class App
             puts error.colorize(:red)
 
             username = @prompt.ask("Username: ") do |q|
+                # error handling requiring input
                 q.required true
                 q.messages[:required?] = "Username is required."
             end
 
             password = @prompt.mask("Password: ") do |q|
+                # error handling requiring input
                 q.required true
                 q.messages[:required?] = "Password is required."
             end
@@ -97,6 +99,7 @@ class App
 
     # menus that repeat on all methods
     def go_to(input)
+        # get input to menu selection and match to the value to open screen
         case input
             when "PET_SITTERS"
                 menu_pet_sitter
@@ -147,6 +150,7 @@ class App
     def pet_sitter_edit(pet_sitter)
         if @prompt.select("Edit name? ", @yes_or_no)
             pet_sitter["name"] = @prompt.ask("Name: ") do |q|
+                # error handling requiring input
                 q.required true
                 q.validate /[a-z]+/
                 # error handling message
@@ -158,6 +162,7 @@ class App
 
         if @prompt.select("Edit Email? ", @yes_or_no)
             pet_sitter["contact"] = @prompt.ask("Email: ") do |q|
+                # error handling requiring input
                 q.required true
                 q.messages[:required?] = "Required email address"
                 # error handling message
@@ -235,6 +240,7 @@ class App
     def pet_edit(pet)
         if @prompt.select("Edit pet name? ", @yes_or_no)
             pet["name"] = @prompt.ask("Name: ")do |q|
+                # error handling requiring input
                 q.required true
                 q.validate /[a-z]+/
                 # error handling message
@@ -246,6 +252,7 @@ class App
 
         if @prompt.select("Edit pet age? ", @yes_or_no)
             pet["age"] = @prompt.ask("Age: ", convert: :integer) do |q|
+                # error handling requiring input
                 q.required true
                 # error handling message
                 q.messages[:required?] = "Required pet age"
@@ -271,6 +278,7 @@ class App
     # menu option to add pet
     def pet_add(client_id)
         name = @prompt.ask("Pet Name?") do |q|
+            # error handling requiring input
             q.required true
             q.validate /[a-z]+/
             # error handling message
@@ -280,6 +288,7 @@ class App
         end
 
         age = @prompt.ask("Pet Age?", convert: :integer) do |q|
+            # error handling requiring input
             q.required true
             #  error handling message
             q.messages[:required?] = "Required pet age"
@@ -350,6 +359,7 @@ class App
     def client_edit(client)
         if @prompt.select("Edit client name? ", @yes_or_no)
             client["name"] = @prompt.ask("Name: ") do |q|
+                # error handling requiring input
                 q.required true
                 q.validate /[a-z]+/
                 # error handling message
@@ -361,6 +371,7 @@ class App
 
         if @prompt.select("Edit Email? ", @yes_or_no)
             client["contact"] = @prompt.ask("Email: ") do |q|
+                # error handling requiring input
                 q.required true
                 # error handling message
                 q.messages[:required?] = "Required client email address"
@@ -391,6 +402,7 @@ class App
     # add new client
     def client_add()
         name = @prompt.ask("Client Name?") do |q|
+            # error handling requiring input
             q.required true
             q.validate /[a-z]+/
             # error handling message
@@ -400,6 +412,7 @@ class App
         end
 
         contact = @prompt.ask("Email:") do |q|
+            # error handling requiring input
             q.required true
             # error handling message
             q.messages[:required?] = "Required email address"
@@ -483,6 +496,7 @@ class App
     def task_edit(task)
         if @prompt.select("Edit description? ", @yes_or_no)
             task["description"] = @prompt.ask("Description: ")do |q|
+            # error handling requiring input
             q.required true
             # error handling message
             q.messages[:required?] = "Required  tasks description"
@@ -504,6 +518,7 @@ class App
     # add task option
     def task_add(job_id)
         description = @prompt.ask("Description: ")do |q|
+            # error handling requiring input
             q.required true   
             # error handling message
             q.messages[:required?] = "Required tasks description"
@@ -574,6 +589,7 @@ class App
             while(!valid_date)
                 # add date for job
                 job["date"] = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
+                    # error handling requiring input
                     q.required true
                     # error handling message
                     q.messages[:required?] = "Required date (dd/mm/yyyy)"
@@ -625,6 +641,7 @@ class App
         valid_date = false
         while (!valid_date)
             date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
+                # error handling requiring input
                 q.required true   
                 # error handling message
                 q.messages[:required?] = "Required date (dd/mm/yyyy)"
