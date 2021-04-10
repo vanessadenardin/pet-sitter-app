@@ -131,4 +131,16 @@ class Database
         # go to last item of the array, get the id and sum +1
         return @data[class_name][-1]["id"] + 1
     end
+
+    # get jobs list from json using client id and returning it
+    def get_jobs_by_client_id(client_id)
+        jobs = []
+        for job in get_data("jobs")
+            if client_id == job["client_id"]
+                jobs.push(job)
+            end
+        end
+
+        return jobs
+    end
 end

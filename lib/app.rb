@@ -392,8 +392,14 @@ class App
 
     # delete client option
     def client_delete(client)
+        # delete all client pets
         for pet in client["pet_list"]
             @db.delete("pets", pet["id"])
+        end
+
+        # delete all client jobs
+        for job in @db.get_jobs_by_client_id(client["id"])
+            @db.delete("jobs", job["id"])
         end
 
         @db.delete("clients", client["id"])
@@ -638,6 +644,22 @@ class App
 
     # add job option
     def job_add()
+        clients = @db.get_data("clients")
+        for client in clients
+            client["pet_list"] = @db.get_pet_list_by_client_id(client["id"])
+        end
+
+        # check if exists any clients - need at least one for creating a job
+        if clients.length < 1
+            puts "No existing clients - can't create a job".colorize(:red)
+            clients_screen = @prompt.select("Do you want to go to clients screen?", @yes_or_no)
+            if clients_screen
+                menu_clients()
+            else
+                menu_jobs()
+            end
+        end
+
         valid_date = false
         while (!valid_date)
             date = @prompt.ask("Date (dd/mm/YYYY): ")do |q|
@@ -652,13 +674,31 @@ class App
         end
 
         menu = []
-        for client in @db.get_data("clients")
-            menu.push({name: client["name"], value: client["id"]})
+        for client in clients
+            menu.push({name: client["name"], value: client})
         end
-        client_id = @prompt.select("", menu)
+        menu = menu + @navigation
+
+        # validate if client has any pets added
+        # offer to add if not
+        # otherwise have to pick another client or leave
+        valid_client = false
+        while(!valid_client)
+            client_selected = @prompt.select("", menu)
+            go_to(client_selected)
+            if client_selected["pet_list"].length < 1
+                puts "Client selected doesn't have pets and can't be selected".colorize(:red)
+                add_pet_for_client = @prompt.select("Do you want to add a pet for it?", @yes_or_no)
+                if add_pet_for_client
+                    menu_edit_client(client_selected["id"])
+                end
+            else
+                valid_client = true
+            end
+        end
 
         new_id = @db.get_new_id("jobs")
-        job = Job.new(new_id, date, client_id)
+        job = Job.new(new_id, date, client_selected["id"])
 
         @db.add("jobs", job)
 
