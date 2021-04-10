@@ -198,36 +198,36 @@ Errors are handled through the validation in the inputs avoiding invalid data en
 <!-- Users can walk through a tutorial rundown of the application by using spotify_rec -t, with a number of screens explaining how each feature works and how it relates to the rest of the application. Each feature has its own sub-menu which is accessible through the main menu. The sub-menu includes a list of all available options, and utilises TTY-Prompt to make selecting and navigating through the options and menus hassle free. This all makes for a swift interation with the program, and any particular feature can be reached anywhere the program within 1-3 selections from the respective menus. Errors are handled in the program in a variety of ways, including conditional checks, rescuing errors and limiting input. Conditional checks reroute users in the program if the conditional is true, such as if the user has 5 items in MyList already, the program won't let them proceed to add another, and will kick them back to the menu. Raising errors and rescuing them is also used in areas of the program, such as not allowing a list to be displayed if it doesn't have any items in it and having the user choose a new username or password if it doesn't meet the requirements. Finally, TTY-Prompt's select capability is used to limit the range of user input that can be received, and eliminates any misspellings or unexpected options when navigating through the program. The user is only able to select from a defined list for things such as menus, and this doesn't allow any errors based on user input. Furthermore, TTY-Prompt offers a validate function, which validates whether a users selected amount of recommendations is within the range that is allowed to be generated. Each error is accompanied by a message that is printed to the screen to tell the user what has happened, and how they can take steps to fix it. -->
 ### 2. User instructions
 
+1. Install git
 1. Install Ruby (version indicated: ruby 2.7.2p137)
-1. Install Ruby Gem
-    - rspec
-    - tty-prompt
-    - emojis
-    - artii
-    - colorize
-    - date
-1. shell script
-1. comand line arguments
-<!-- Install ruby, we recommend using asdf to do this.
-Install the Ruby Gem. You can view the Ruby Gems page for this gem here. gem install spotify_rec
-This should download the following gem dependencies:
-RSpotify
-TTY-Prompt
-Terminal-Table
-Colorizer If for any reason these don't install, you can do so with the following:
-gem install rspotify
-gem install tty-prompt
-gem install terminal-table
-gem install colorizer
-You can run the app by typing spotify_rec from anywhere in your terminal.
-In addition to spotify_rec, the program takes the following options:
--v or --version || Displays the program version
--h or --help || Displays the help message
--t, --tutorial || Have a brief walkthrough of the program
--q (GENRE) or --quick (GENRE) || Generates a quick recommendation using the genre that is supplied -->
+1. Run `make install` to install Ruby gems through `bundler` and generate an initial database json file
+1. The `Makefile` allow you to change some settings for the application installation:
+    - `username`/`password` - initial username and password | `make install USERNAME=<user> PASSWORD=<password>` (default is `admin`/`123456`)
 
----
+- Expected command result:
+```bash
+Bundle complete! 11 Gemfile dependencies, 11 gems now installed.
+Use `bundle info [gemname]` to see where a bundled gem is installed.
+Database file created database.json
+```
+
 ### 3. Requirements
+- List of gems required:
+
+```ruby
+ruby '2.7.2'
+gem 'artii', '~> 2.1.2'
+gem 'colorize', '~> 0.8.1'
+gem 'date', '~> 3.1.1'
+gem 'emojis', '~> 0.0.1'
+gem 'rspec', '~> 3.10.0'
+gem 'rspec-core', '~> 3.10.1'
+gem 'rspec-expectations', '~> 3.10.1'
+gem 'rspec-mocks', '~> 3.10.2'
+gem 'rspec-support', '~> 3.10.2'
+gem 'tty-prompt', '~> 0.23.0'
+gem 'json', '~> 2.3.0'
+```
 
 ---
 ## Reference
