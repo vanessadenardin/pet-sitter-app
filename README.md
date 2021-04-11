@@ -50,7 +50,6 @@ I chose to use GitHub projects to organize what I needed to do. I separate into 
 [GitHub Projects link here](https://github.com/vanessadenardin/pet-sitter-app/projects/1)
 
 ---
-<!-- ## How use -->
 ## 3. Diagram
 
 ## - Workflow diagram
@@ -147,7 +146,8 @@ All menus allow the user to return to the previous menu or return to the home me
 
 - Log out
 
-Extras:
+
+#### Extras:
 
 In the first phase, some resources could not be added due to the time limit. However, there is a desire to expand the features of this application by adding:
 
@@ -189,13 +189,13 @@ In the first phase, some resources could not be added due to the time limit. How
 
 ### 1. Overview
 
-The user have access to 5 screens, including a welcome screen where username and password is required to access all data storage in the application. 
-The welcome screen ask for user and password to open the whole application.
-The Home screen has the main menu that includes Pet sitter, Client, Job and logout features using TTY-Prompt to navigation and make the selection choosing the option through arrow keys (↑/↓).
-Pet sitter screen allows, at this phase, only change data of the pet sitter. Beside that, Client and Job screens are accessible allowing additions, modifications and deltions of the information storage. In the Client screen the user can access client's list and pet's list for each client through a sub-menu that makes the client's name and pet's name as the options to choose. At this first version, the user will be only allow to add pets as cat or dog. In the Job screen the pet sitter can access the job's list via the sub-menu and into that can access the list of task to be completed.
-Errors are handled through the validation in the inputs avoiding invalid data entry, such as required inputs of string, date or integer type, as well email address valid. Also, to access the application, the user has to have a valid username and password to enter, if not a error will be raised and the  user will enter in a loop. Each error will show a message that will appear in the screen to tell what has happened from that the user will be able to fix it.
+The user has access to 5 screens, including a welcome screen where a username and password are required to access all data stored in the application.
+The *welcome* screen asks for a username and password to open the entire application.
+The *home* screen has the main menu that includes pet sitters, clients, jobs and logout features using TTY-Prompt to navigate and make the selection by choosing the option using the arrow keys (↑ / ↓).
+The *pet sitters* screen allows, at this stage, only to change the pet sitter's data. In addition, the *clients* and *jobs* screens are accessible allowing additions, modifications and deletions to the information stored. On the *clients* screen, the user can access the client list and the pet list of each client through a submenu that has the options of the client's name and the pet's name as options. In this first version, the user will only be able to add pets such as cat or dog. On the *jobs* screen, the pet sitter can access the list of jobs through the submenu and from there he can access the list of tasks to be completed.
+Errors are handled through validation entries, avoiding the entry of invalid data, requiring string, dates or integers, as the type of entries, as well as a valid email address. In addition, to access the application, the user must have a valid username and password to enter, otherwise, an error will be generated and the user will enter a loop. As in this first phase, the application will be for only one user, the default username and password are already included and the change can be made at the time of installing the application. Each error will show a message that will appear on the screen advising the user to fix it.
 
-<!-- Users can walk through a tutorial rundown of the application by using spotify_rec -t, with a number of screens explaining how each feature works and how it relates to the rest of the application. Each feature has its own sub-menu which is accessible through the main menu. The sub-menu includes a list of all available options, and utilises TTY-Prompt to make selecting and navigating through the options and menus hassle free. This all makes for a swift interation with the program, and any particular feature can be reached anywhere the program within 1-3 selections from the respective menus. Errors are handled in the program in a variety of ways, including conditional checks, rescuing errors and limiting input. Conditional checks reroute users in the program if the conditional is true, such as if the user has 5 items in MyList already, the program won't let them proceed to add another, and will kick them back to the menu. Raising errors and rescuing them is also used in areas of the program, such as not allowing a list to be displayed if it doesn't have any items in it and having the user choose a new username or password if it doesn't meet the requirements. Finally, TTY-Prompt's select capability is used to limit the range of user input that can be received, and eliminates any misspellings or unexpected options when navigating through the program. The user is only able to select from a defined list for things such as menus, and this doesn't allow any errors based on user input. Furthermore, TTY-Prompt offers a validate function, which validates whether a users selected amount of recommendations is within the range that is allowed to be generated. Each error is accompanied by a message that is printed to the screen to tell the user what has happened, and how they can take steps to fix it. -->
+
 ### 2. User instructions
 
 1. Install git
