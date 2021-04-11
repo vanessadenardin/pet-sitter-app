@@ -12,3 +12,4 @@ gem 'rspec-support', '~> 3.10.2'
 gem 'tty-prompt', '~> 0.23.0'
 gem 'json', '~> 2.3.0'
 gem "colorize", "~> 0.8.1"
+gem 'ruby-debug-ide', '~> 0.7.2'

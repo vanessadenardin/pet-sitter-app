@@ -230,3 +230,9 @@ gem 'json', '~> 2.3.0'
 
 ---
 ## Reference
+
+```plantumlcode
+@startuml
+alice->bob:hello
+@enduml
+```

@@ -1,6 +1,9 @@
 require_relative './user'
 
 class Client < User
+    attr_reader :id
+    attr_accessor :pet_list
+
     def initialize(id, name, contact, post_code)
         super(id, name, contact, post_code)
         @pet_list = []
