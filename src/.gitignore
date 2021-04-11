@@ -1,0 +1,4 @@
+.vscode
+database.json
+.DS_Store
+*.gem
