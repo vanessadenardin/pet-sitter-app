@@ -109,11 +109,11 @@ class App
             when "EXIT"
                 system 'clear'
                 @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
-                exit
+                exit(0)
         end
     end
 
-    # pet sitter screen (first stage only one pet sitter is allowed)
+    # pet sitter screen (first version only one pet sitter is allowed)
     def menu_edit_pet_sitter(id)
         begin
             pet_sitter = @db.get_by_id("pet_sitters", id)
@@ -186,7 +186,7 @@ class App
         return pet_sitter
     end
 
-    # pet sitter list (first phase only one is allowed)
+    # pet sitter list (first version only one is allowed)
     def menu_pet_sitter()
         loop do
             system 'clear'
@@ -786,14 +786,14 @@ class App
 
     def handle_exit(message)
         case message
-        when "TTY::Reader::InputInterrupt"
-            system 'clear'
-            @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
-            exit
         when "exit"
             system 'clear'
             @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
-            exit
+            exit(0)
+        when "TTY::Reader::InputInterrupt"
+            system 'clear'
+            @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
+            exit(0)
         end
     end
 

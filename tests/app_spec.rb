@@ -1,4 +1,4 @@
-require_relative '../lib/app'
+require_relative '../lib/pet_sitter_app'
 
 describe App do
     # generate a sample database file

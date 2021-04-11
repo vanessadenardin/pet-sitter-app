@@ -1,4 +1,4 @@
-require_relative './lib/app.rb'
+require 'pet_sitter_app'
 
 database_file = File.join(File.dirname(__FILE__), 'database.json')
 app = App.new(database_file)

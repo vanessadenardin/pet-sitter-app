@@ -199,8 +199,15 @@ Errors are handled through validation entries, avoiding the entry of invalid dat
 
 1. Install git
 1. Install Ruby (version indicated: ruby 2.7.2p137)
-1. Run `make install` to install Ruby gems through `bundler` and generate an initial database json file
-1. The `Makefile` allow you to change some settings for the application installation:
+1. Run `make install` to:
+    - install Ruby gems through `bundler`
+    - generate an initial database json file
+    - build a local gem for this application
+    - install the built gem
+1. Once the installation is complete, run `make exec` to start the application using the local built gem
+1. If you want to run the tests suite, just run `make test`
+
+The `Makefile` allow you to change some settings for the application installation:
     - `username`/`password` - initial username and password | `make install USERNAME=<user> PASSWORD=<password>` (default is `admin`/`123456`)
 
 - Expected command result:
@@ -209,6 +216,12 @@ Bundle complete! 11 Gemfile dependencies, 11 gems now installed.
 Use `bundle info [gemname]` to see where a bundled gem is installed.
 Database file created database.json
 ```
+
+Alternatively, if you have Docker runtime installed on your computer you can just run:
+- `make build`
+- `make run`
+
+Docker helps packaging all the dependecies into a docker image (including ruby itself) reducing the chances of errors when running the application in multiple devices.
 
 ### 3. Requirements
 - List of gems required:
