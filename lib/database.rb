@@ -3,10 +3,11 @@ require 'date'
 
 # class to interact with the json file as a database
 class Database
+    attr_accessor :data
     # get first state of all models in the database
     def initialize(database_file)
         @database_file = database_file
-        @data = {}
+        @data = get_all()
     end
 
     # convert hash into json and save to file
@@ -25,16 +26,20 @@ class Database
 
     # edit item in the json file and save
     def edit(class_name, object)
-        @data = get_all()
-        # go through all items in the file
-        @data[class_name].map!{|item|
-            if item["id"] == object["id"]
-                object
-            else
-                item
-            end
-        }
-        save()
+        begin
+            @data = get_all()
+            # go through all items in the file
+            @data[class_name].map!{|item|
+                if item["id"] == object["id"]
+                    object
+                else
+                    item
+                end
+            }
+            save()
+        rescue Exception => e
+            raise "Either class_name: #{class_name} or object: #{object} are invalid."
+        end
     end
 
     # delete item in the json file and save
@@ -56,6 +61,7 @@ class Database
                 return item
             end
         end
+        raise "#{class_name} id #{id} not found."
     end
 
     # get from json file class data
@@ -142,5 +148,24 @@ class Database
         end
 
         return jobs
+    end
+
+    def validate_login(username, password)
+        pet_sitters = get_data("pet_sitters")
+        
+        for pet_sitter in pet_sitters
+            if pet_sitter["username"] == username
+                # right username
+                if pet_sitter["password"] == password
+                    # right password -> login successfully
+                    return true
+                else
+                    # wrong password
+                    return false
+                end
+            end
+        end
+        # not found
+        return false
     end
 end

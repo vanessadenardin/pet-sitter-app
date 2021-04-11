@@ -1,7 +1,7 @@
 DB_FILE=database.json
 USERNAME?=admin
 PASSWORD?=123456
-TESTS_FILE?=ruby_petsitter_spec.rb
+TESTS_FOLDER?=tests
 APP_FILE?=ruby_petsitter_app.rb
 
 gems-install:
@@ -13,8 +13,8 @@ seed-database:
 
 install: gems-install seed-database
 
-test:
-	rspec ${TESTS_FILE}
+tests:
+	rspec ${TESTS_FOLDER}/*
 
 run:
 	ruby ${APP_FILE}

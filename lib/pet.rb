@@ -1,5 +1,5 @@
 class Pet
-    attr_reader :name
+    attr_reader :name, :type
     def initialize(id, name, age, type, observations, client_id)
         @id = id
         @name = name

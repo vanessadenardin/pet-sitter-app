@@ -63,17 +63,10 @@ class App
             end
             
             # Error handling to acess app
-            pet_sitters = @db.get_data("pet_sitters")
-            for pet_sitter in pet_sitters
-                if pet_sitter["username"] == username.downcase
-                    if pet_sitter["password"] == password
-                        main_menu()
-                    else
-                        error = "Wrong username or password."
-                    end
-                else
-                    error = "Wrong username or password."
-                end
+            if @db.validate_login(username.downcase, password)
+                main_menu()
+            else
+                error = "Wrong username or password."
             end
         end
     end
@@ -114,35 +107,42 @@ class App
             when "HOME"
                 main_menu()
             when "EXIT"
-                exit()
+                system 'clear'
+                @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
+                exit
         end
     end
 
     # pet sitter screen (first stage only one pet sitter is allowed)
     def menu_edit_pet_sitter(id)
-        pet_sitter = @db.get_by_id("pet_sitters", id)
+        begin
+            pet_sitter = @db.get_by_id("pet_sitters", id)
+            loop do
+                system 'clear'
+                puts "--> Pet sitter details <--".colorize(:cyan)
+                puts @headline
+                puts @pipe + "Name: ".colorize(:cyan) + "#{pet_sitter["name"]}"
+                puts @pipe + "Contact: ".colorize(:cyan) + "#{pet_sitter["contact"]}"
+                puts @pipe + "Post Code: ".colorize(:cyan) + "#{pet_sitter["post_code"]}"
+                puts @pipe + "ABN: ".colorize(:cyan) + "#{pet_sitter["abn"]}"
+                puts @headline
+                menu = []
+                menu.push({name: 'Edit pet sitter', value: "EDIT"})
+                menu = menu + @navigation
+                input = @prompt.select("Menu: ", menu)
+                @last_menu = "menu_pet_sitter"
+                go_to(input)
 
-        loop do
-            system 'clear'
-            puts "--> Pet sitter details <--".colorize(:cyan)
-            puts @headline
-            puts @pipe + "Name: ".colorize(:cyan) + "#{pet_sitter["name"]}"
-            puts @pipe + "Contact: ".colorize(:cyan) + "#{pet_sitter["contact"]}"
-            puts @pipe + "Post Code: ".colorize(:cyan) + "#{pet_sitter["post_code"]}"
-            puts @pipe + "ABN: ".colorize(:cyan) + "#{pet_sitter["abn"]}"
-            puts @headline
-            menu = []
-            menu.push({name: 'Edit pet sitter', value: "EDIT"})
-            menu = menu + @navigation
-            input = @prompt.select("Menu: ", menu)
-            @last_menu = "menu_pet_sitter"
-            go_to(input)
-
-            # edit option in the menu
-            case input
-            when "EDIT"
-                pet_sitter = pet_sitter_edit(pet_sitter)
+                # edit option in the menu
+                case input
+                when "EDIT"
+                    pet_sitter = pet_sitter_edit(pet_sitter)
+                end
             end
+        rescue Exception => e
+            handle_exit(e.message)
+            error(e.message)
+            go_to("BACK")
         end
     end
 
@@ -313,45 +313,51 @@ class App
 
     # client edit screen options
     def menu_edit_client(id)
-        client = @db.get_by_id("clients", id)
-        
-        loop do
-            system 'clear'
-            client["pet_list"] = @db.get_pet_list_by_client_id(client["id"])
-            puts "--> Client details <--".colorize(:cyan)
-            puts @headline
-            puts @pipe + "Name: ".colorize(:cyan) + "#{client["name"]}"
-            puts @pipe + "Contact: ".colorize(:cyan) + "#{client["contact"]}"
-            puts @pipe + "Post Code: ".colorize(:cyan) + "#{client["post_code"]}"
-            puts @headline
-            puts @pipe + "Client has #{client["pet_list"].length.to_s.colorize(:cyan)} pets registered."
-            puts @headline
-            # list of pets by client will appear
-            menu = []
-            for pet in client["pet_list"]
-                menu.push({name: pet["name"], value: pet})
-            end
-            menu.push({name: 'Add pet', value: "ADD"})
-            menu.push({name: 'Delete client', value: "DELETE"})
-            menu.push({name: 'Edit client', value: "EDIT"})
-            menu = menu + @navigation
-            input = @prompt.select("Pets list (click to edit)", menu)
-            @last_menu = "menu_clients"
-            go_to(input)
+        begin
+            client = @db.get_by_id("clients", id)
+            
+            loop do
+                system 'clear'
+                client["pet_list"] = @db.get_pet_list_by_client_id(client["id"])
+                puts "--> Client details <--".colorize(:cyan)
+                puts @headline
+                puts @pipe + "Name: ".colorize(:cyan) + "#{client["name"]}"
+                puts @pipe + "Contact: ".colorize(:cyan) + "#{client["contact"]}"
+                puts @pipe + "Post Code: ".colorize(:cyan) + "#{client["post_code"]}"
+                puts @headline
+                puts @pipe + "Client has #{client["pet_list"].length.to_s.colorize(:cyan)} pets registered."
+                puts @headline
+                # list of pets by client will appear
+                menu = []
+                for pet in client["pet_list"]
+                    menu.push({name: pet["name"], value: pet})
+                end
+                menu.push({name: 'Add pet', value: "ADD"})
+                menu.push({name: 'Delete client', value: "DELETE"})
+                menu.push({name: 'Edit client', value: "EDIT"})
+                menu = menu + @navigation
+                input = @prompt.select("Pets list (click to edit)", menu)
+                @last_menu = "menu_clients"
+                go_to(input)
 
-            # specific menu options added 
-            case input
-            when "ADD"
-                pet_add(client["id"])
-            when "DELETE"
-                client_delete(client)
-                menu_clients()
-            when "EDIT"
-                client = client_edit(client)
-                menu_edit_client(id)
-            else
-                menu_edit_pet(input)
+                # specific menu options added 
+                case input
+                when "ADD"
+                    pet_add(client["id"])
+                when "DELETE"
+                    client_delete(client)
+                    menu_clients()
+                when "EDIT"
+                    client = client_edit(client)
+                    menu_edit_client(id)
+                else
+                    menu_edit_pet(input)
+                end
             end
+        rescue Exception => e
+            handle_exit(e.message)
+            error(e.message)
+            go_to("BACK")
         end
     end 
     
@@ -483,7 +489,6 @@ class App
             ]
             menu = menu + @navigation
             input = @prompt.select("Menu: ", menu)
-            go_to(input)
 
             # specific menu options added 
             case input
@@ -495,6 +500,7 @@ class App
             when "BACK"
                 menu_edit_job(task["job_id"])
             end
+            go_to(input)
         end
     end
 
@@ -539,52 +545,59 @@ class App
 
     # menu edit jobs
     def menu_edit_job(id)
-        loop do
-            system 'clear'
-            job = @db.get_by_id("jobs", id)
-            job["list_tasks"] = @db.get_task_list_by_job_id(job["id"])
-            job["client"] = @db.get_by_id("clients", job["client_id"])
+        begin
+            loop do
+                system 'clear'
+                job = @db.get_by_id("jobs", id)
+                job["list_tasks"] = @db.get_task_list_by_job_id(job["id"])
+                job["client"] = @db.get_by_id("clients", job["client_id"])
 
-            puts "--> Job details <--".colorize(:cyan)
-            puts @headline
-            puts @pipe + "Job ID: ".colorize(:cyan) + "#{job["id"]}"
-            puts @pipe + "Date: ".colorize(:cyan) + "#{job["date"]}"
-            puts @pipe + "Client: ".colorize(:cyan) + "#{job["client"]["name"]}"
-            puts @headline
+                puts "--> Job details <--".colorize(:cyan)
+                puts @headline
+                puts @pipe + "Job ID: ".colorize(:cyan) + "#{job["id"]}"
+                puts @pipe + "Date: ".colorize(:cyan) + "#{job["date"]}"
+                puts @pipe + "Client: ".colorize(:cyan) + "#{job["client"]["name"]}"
+                puts @headline
 
-            # message highlighting tasks status
-            tasks_not_completed = job["list_tasks"].select{|task| !task["status"]}.length
-            puts "Job has #{job["list_tasks"].length.to_s.colorize(:cyan)} tasks registered and #{tasks_not_completed > 0 ? "#{tasks_not_completed.to_s.colorize(:red)} tasks to be completed." : "all tasks completed."}"
-            puts @headline
+                # message highlighting tasks status
+                tasks_not_completed = job["list_tasks"].select{|task| !task["status"]}.length
+                puts "Job has #{job["list_tasks"].length.to_s.colorize(:cyan)} tasks registered and #{tasks_not_completed > 0 ? "#{tasks_not_completed.to_s.colorize(:red)} tasks to be completed." : "all tasks completed."}"
+                puts @headline
 
-            menu = []
-            for task in job["list_tasks"]
-                menu.push({name: task["description"], value: task})
+                menu = []
+                for task in job["list_tasks"]
+                    menu.push({name: task["description"], value: task})
+                end
+                menu.push({name: 'Add task', value: "ADD"})
+                menu.push({name: 'Edit job date', value: "EDIT"})
+                menu.push({name: 'Delete job', value: "DELETE"})
+                menu = menu + @navigation
+                input = @prompt.select("Tasks list (click to edit)", menu)
+
+                @last_menu = "menu_jobs"
+                go_to(input)
+
+                # specific menu options added 
+                case input
+                when "ADD"
+                    task_add(job["id"])
+                when "DELETE"
+                    job_delete(job)
+                    menu_jobs()
+                when "EDIT"
+                    job = job_edit(job)
+                    menu_edit_job(id)
+                when "BACK"
+                    menu_jobs()
+                else
+                    menu_edit_task(task)
+                end
             end
-            menu.push({name: 'Add task', value: "ADD"})
-            menu.push({name: 'Edit job date', value: "EDIT"})
-            menu.push({name: 'Delete job', value: "DELETE"})
-            menu = menu + @navigation
-            input = @prompt.select("Tasks list (click to edit)", menu)
-
-            @last_menu = "menu_jobs"
-            go_to(input)
-
-            # specific menu options added 
-            case input
-            when "ADD"
-                task_add(job["id"])
-            when "DELETE"
-                job_delete(job)
-                menu_jobs()
-            when "EDIT"
-                job = job_edit(job)
-                menu_edit_job(id)
-            when "BACK"
-                menu_jobs()
-            else
-                menu_edit_task(task)
-            end
+        
+        rescue Exception => e
+            handle_exit(e.message)
+            error(e.message)
+            go_to("BACK")
         end
     end 
     
@@ -602,7 +615,13 @@ class App
                 end
                 # sends date input to date validation
                 # keep on this loop until date is valid
-                valid_date = validate_date(job["date"])
+                begin
+                    valid_date = validate_date(job["date"])      
+                rescue Exception => e
+                    handle_exit(e.message)
+                    error(e.message)
+                    valid_date = false
+                end
             end
 
         end
@@ -613,24 +632,18 @@ class App
 
     # date validation
     def validate_date(date)
-        begin
-            # first convert the input string into the Date gem
-            # that will validate most of the cases like m/d/y or other separators
-            new_date = Date.strptime(date, "%d/%m/%Y")
-            # extract the year from the date, convert to string and split to check Year size
-            # The calculation of 7 days logic requires the year to be full size i.e 2021
-            # so if length different than 4, raises an argument for invalid date
-            if new_date.year.to_s.split("").length != 4
-                raise ArgumentError
-            end
-
-            # return true if no errors on validations
-            return true
-
-        rescue ArgumentError
-            puts "Invalid date"
-            return false
+        # first convert the input string into the Date gem
+        # that will validate most of the cases like m/d/y or other separators
+        new_date = Date.strptime(date, "%d/%m/%Y")
+        # extract the year from the date, convert to string and split to check Year size
+        # The calculation of 7 days logic requires the year to be full size i.e 2021
+        # so if length different than 4, raises an argument for invalid date
+        if new_date.year.to_s.split("").length != 4
+            raise "Invalid date"
         end
+
+        # return true if no errors on validations
+        return true
     end
 
     # delete job option
@@ -670,7 +683,13 @@ class App
             end
             # sends date input to date validation
             # keep on this loop until date is valid
-            valid_date = validate_date(date)
+            begin
+                valid_date = validate_date(date)
+            rescue Exception => e
+                handle_exit(e.message)
+                error(e.message)
+                valid_date = false
+            end
         end
 
         menu = []
@@ -711,46 +730,70 @@ class App
 
     # job screen
     def menu_jobs()
-        # jobs is outside the loop so we can have either 7 days only or all jobs
-        jobs = @db.get_jobs_last_7_days()
-        # variable to control changing display messages
-        next_7_days = true
-        loop do
+        begin
+            # jobs is outside the loop so we can have either 7 days only or all jobs
+            jobs = @db.get_jobs_last_7_days()
+            # variable to control changing display messages
+            next_7_days = true
+            loop do
+                system 'clear'
+                headline("Jobs")
+                # message highlighting jobs in the list (next 7 days or all)
+                puts "You have #{jobs.length.to_s.colorize(:cyan)} jobs" + "#{next_7_days ? " for the next 7 days." : "."}"
+                puts @headline
+
+                menu = []
+                for job in jobs
+                    job["client"] = @db.get_by_id("clients", job["client_id"])
+                    menu.push({name: "Name: #{job["client"]["name"]} | Date: #{job["date"]}", value: job["id"]})
+                end
+                menu.push({name: 'Add job', value: "ADD"})
+                if next_7_days
+                    menu.push({name: 'Show all jobs', value: "ALL"})
+                else
+                    menu.push({name: 'Show only next 7 days of jobs', value: "JOBS"})
+                end
+                menu = menu + @navigation
+                input = @prompt.select("List of jobs (click to edit)", menu)
+                @last_menu = "main_menu"
+                go_to(input)
+
+                # specific menu options added 
+                case input
+                when "ADD"
+                    job_add()
+                    # refresh jobs from last 7 days after adding one so it can update the menu
+                    # reason is because the get jobs is outside the loop
+                    jobs = @db.get_jobs_last_7_days()
+                when "ALL"
+                    jobs = @db.get_data("jobs")
+                    next_7_days = false
+                else
+                    menu_edit_job(input)
+                end
+            end
+        
+        rescue Exception => e
+            handle_exit(e.message)
+            error(e.message)
+            go_to("BACK")
+        end
+    end
+
+    def error(message)
+        @prompt.ask("#{message} - press any key to continue".colorize(:red))
+    end
+
+    def handle_exit(message)
+        case message
+        when "TTY::Reader::InputInterrupt"
             system 'clear'
-            headline("Jobs")
-            # message highlighting jobs in the list (next 7 days or all)
-            puts "You have #{jobs.length.to_s.colorize(:cyan)} jobs" + "#{next_7_days ? " for the next 7 days." : "."}"
-            puts @headline
-
-            menu = []
-            for job in jobs
-                job["client"] = @db.get_by_id("clients", job["client_id"])
-                menu.push({name: "Name: #{job["client"]["name"]} | Date: #{job["date"]}", value: job["id"]})
-            end
-            menu.push({name: 'Add job', value: "ADD"})
-            if next_7_days
-                menu.push({name: 'Show all jobs', value: "ALL"})
-            else
-                menu.push({name: 'Show only next 7 days of jobs', value: "JOBS"})
-            end
-            menu = menu + @navigation
-            input = @prompt.select("List of jobs (click to edit)", menu)
-            @last_menu = "main_menu"
-            go_to(input)
-
-            # specific menu options added 
-            case input
-            when "ADD"
-                job_add()
-                # refresh jobs from last 7 days after adding one so it can update the menu
-                # reason is because the get jobs is outside the loop
-                jobs = @db.get_jobs_last_7_days()
-            when "ALL"
-                jobs = @db.get_data("jobs")
-                next_7_days = false
-            else
-                menu_edit_job(input)
-            end
+            @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
+            exit
+        when "exit"
+            system 'clear'
+            @prompt.ask("#{@emoji[:smiling_cat_face_with_open_mouth]} Bye! #{@emoji[:dog_face]}".colorize(:magenta))
+            exit
         end
     end
 

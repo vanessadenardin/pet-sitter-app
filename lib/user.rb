@@ -6,7 +6,8 @@ class User
         @name = name
         @contact = contact
         @post_code = post_code
+        @username = ""
+        @password = ""
     end
-
 end
 
