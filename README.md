@@ -195,7 +195,6 @@ The *home* screen has the main menu that includes pet sitters, clients, jobs and
 The *pet sitters* screen allows, at this stage, only to change the pet sitter's data. In addition, the *clients* and *jobs* screens are accessible allowing additions, modifications and deletions to the information stored. On the *clients* screen, the user can access the client list and the pet list of each client through a submenu that has the options of the client's name and the pet's name as options. In this first version, the user will only be able to add pets such as cat or dog. On the *jobs* screen, the pet sitter can access the list of jobs through the submenu and from there he can access the list of tasks to be completed.
 Errors are handled through validation entries, avoiding the entry of invalid data, requiring string, dates or integers, as the type of entries, as well as a valid email address. In addition, to access the application, the user must have a valid username and password to enter, otherwise, an error will be generated and the user will enter a loop. As in this first phase, the application will be for only one user, the default username and password are already included and the change can be made at the time of installing the application. Each error will show a message that will appear on the screen advising the user to fix it.
 
-
 ### 2. User instructions
 
 1. Install git
